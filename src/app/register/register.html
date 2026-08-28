@@ -1,0 +1,567 @@
+<div class="min-h-screen w-full box-border flex items-center justify-center relative overflow-x-hidden overflow-y-auto py-[30px] px-0 max-[550px]:items-start max-[550px]:py-[20px] max-[550px]:px-[10px] min-[551px]:max-[900px]:py-[35px] min-[551px]:max-[900px]:px-[20px] max-[380px]:py-[15px] max-[380px]:px-[6px] [background:radial-gradient(circle_at_20%_20%,rgba(79,70,229,.18),transparent_35%),radial-gradient(circle_at_80%_80%,rgba(6,182,212,.12),transparent_35%),#080b12]">
+
+  <!-- Background glow -->
+  <div class="absolute w-[500px] h-[500px] bg-[rgba(99,102,241,0.08)] blur-[100px] rounded-full -top-[150px] -right-[100px] pointer-events-none max-[550px]:w-[300px] max-[550px]:h-[300px] max-[550px]:blur-[80px] max-[550px]:-top-[100px] max-[550px]:-right-[120px]"></div>
+
+
+  <div class="w-full max-w-[500px] p-[25px] box-border relative z-[2] min-[551px]:max-[900px]:max-w-[520px] min-[551px]:max-[900px]:p-[20px] max-[550px]:w-full max-[550px]:max-w-full max-[550px]:p-[10px] max-[380px]:p-[6px]">
+
+    <div class="w-full box-border bg-[rgba(17,24,39,0.94)] border border-[rgba(255,255,255,0.08)] rounded-[24px] p-[42px] shadow-[0_30px_80px_rgba(0,0,0,.45),inset_0_1px_0_rgba(255,255,255,.04)] min-[551px]:max-[900px]:p-[38px] max-[550px]:w-full max-[550px]:rounded-[20px] max-[550px]:px-[20px] max-[550px]:py-[28px] max-[380px]:rounded-[18px] max-[380px]:px-[16px] max-[380px]:py-[24px]">
+
+
+      <!-- =====================================================
+           BRAND
+      ====================================================== -->
+
+      <div class="flex items-center gap-[14px] mb-[40px] min-w-0 max-[550px]:gap-[12px] max-[550px]:mb-[30px] max-[380px]:mb-[25px]">
+
+        <div class="w-[48px] h-[48px] flex-[0_0_48px] rounded-[14px] flex items-center justify-center text-white [background:linear-gradient(135deg,#6366f1,#06b6d4)] shadow-[0_10px_30px_rgba(99,102,241,.3)] max-[550px]:w-[44px] max-[550px]:h-[44px] max-[550px]:basis-[44px] max-[550px]:rounded-[12px] max-[380px]:w-[40px] max-[380px]:h-[40px] max-[380px]:basis-[40px]">
+
+          <!-- Finance / Analytics SVG -->
+          <svg
+            class="w-[25px] h-[25px] block text-white max-[550px]:w-[23px] max-[550px]:h-[23px] max-[380px]:w-[21px] max-[380px]:h-[21px]"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+
+            <path
+              d="M4 19V5"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M4 19H20"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+
+            <path
+              d="M7 15L10 11L13 13L18 7"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+            <circle cx="7" cy="15" r="1.2" fill="currentColor" />
+            <circle cx="10" cy="11" r="1.2" fill="currentColor" />
+            <circle cx="13" cy="13" r="1.2" fill="currentColor" />
+            <circle cx="18" cy="7" r="1.2" fill="currentColor" />
+
+          </svg>
+
+        </div>
+
+
+        <div class="min-w-0">
+
+          <h1 class="m-0 text-white text-[23px] font-bold leading-[1.2] max-[550px]:text-[21px] max-[380px]:text-[19px]">Finova</h1>
+
+          <p class="mt-[4px] mb-0 mx-0 text-[#6b7280] text-[13px] leading-[1.3] max-[550px]:text-[12px] max-[380px]:text-[11px]">
+            Finance Dashboard
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           WELCOME
+      ====================================================== -->
+
+      <div class="mb-[30px] max-[550px]:mb-[25px]">
+
+        <h2 class="m-0 text-white text-[30px] font-bold leading-[1.2] min-[551px]:max-[900px]:text-[28px] max-[550px]:text-[25px] max-[380px]:text-[23px]">
+          Create your account
+        </h2>
+
+        <p class="text-[#8b95a7] mt-[8px] mb-0 mx-0 text-[14px] leading-[1.5] max-[550px]:text-[13px] max-[380px]:text-[12px]">
+          Sign up to start tracking your finances
+        </p>
+
+      </div>
+
+
+      <!-- =====================================================
+           REGISTER FORM
+      ====================================================== -->
+
+      <form
+        class="w-full box-border"
+        (ngSubmit)="register()"
+        novalidate
+      >
+
+
+        <!-- ===================================================
+             USERNAME
+        ==================================================== -->
+
+        <div class="w-full mb-[22px] box-border max-[550px]:mb-[18px]">
+
+          <label
+            for="username"
+            class="block text-[#d1d5db] text-[14px] font-semibold mb-[9px] max-[550px]:text-[13px] max-[550px]:mb-[8px]"
+          >
+            Username
+          </label>
+
+          <div class="input-wrapper relative w-full box-border">
+
+            <span class="absolute left-[16px] top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#667085] flex items-center justify-center z-[1] pointer-events-none max-[550px]:left-[14px] max-[550px]:w-[17px] max-[550px]:h-[17px] max-[380px]:left-[13px] max-[380px]:w-[16px] max-[380px]:h-[16px]" aria-hidden="true">
+
+              <svg
+                class="w-[18px] h-[18px] block max-[550px]:w-[17px] max-[550px]:h-[17px] max-[380px]:w-[16px] max-[380px]:h-[16px]"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+
+                <circle
+                  cx="12"
+                  cy="8"
+                  r="3.5"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+
+                <path
+                  d="M5 20C5.8 16.7 8.2 14.8 12 14.8C15.8 14.8 18.2 16.7 19 20"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+
+              </svg>
+
+            </span>
+
+            <input
+              id="username"
+              type="text"
+              name="username"
+              [(ngModel)]="username"
+              placeholder="Choose a username"
+              autocomplete="username"
+              class="block w-full max-w-full h-[54px] box-border rounded-[12px] border border-[#273142] bg-[#0d121c] text-white outline-none text-[15px] transition-[border-color,box-shadow,background] duration-200 ease-in-out placeholder:text-[#566174] focus:border-[#6366f1] focus:bg-[#0e1420] focus:shadow-[0_0_0_3px_rgba(99,102,241,.12)] max-[550px]:h-[52px] max-[550px]:pl-[44px] max-[550px]:text-[14px] max-[380px]:h-[50px] max-[380px]:pl-[42px] max-[380px]:text-[13px]"
+              style="font-family: inherit; padding: 0 16px 0 46px;"
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- ===================================================
+             EMAIL
+        ==================================================== -->
+
+        <div class="w-full mb-[22px] box-border max-[550px]:mb-[18px]">
+
+          <label
+            for="email"
+            class="block text-[#d1d5db] text-[14px] font-semibold mb-[9px] max-[550px]:text-[13px] max-[550px]:mb-[8px]"
+          >
+            Email
+          </label>
+
+          <div class="input-wrapper relative w-full box-border">
+
+            <span class="absolute left-[16px] top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#667085] flex items-center justify-center z-[1] pointer-events-none max-[550px]:left-[14px] max-[550px]:w-[17px] max-[550px]:h-[17px] max-[380px]:left-[13px] max-[380px]:w-[16px] max-[380px]:h-[16px]" aria-hidden="true">
+
+              <svg
+                class="w-[18px] h-[18px] block max-[550px]:w-[17px] max-[550px]:h-[17px] max-[380px]:w-[16px] max-[380px]:h-[16px]"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+
+                <rect
+                  x="3.5"
+                  y="5"
+                  width="17"
+                  height="14"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+
+                <path
+                  d="M4.5 7L12 13L19.5 7"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+
+              </svg>
+
+            </span>
+
+            <input
+              id="email"
+              type="email"
+              name="email"
+              [(ngModel)]="email"
+              placeholder="Enter your email"
+              autocomplete="email"
+              class="block w-full max-w-full h-[54px] box-border rounded-[12px] border border-[#273142] bg-[#0d121c] text-white outline-none text-[15px] transition-[border-color,box-shadow,background] duration-200 ease-in-out placeholder:text-[#566174] focus:border-[#6366f1] focus:bg-[#0e1420] focus:shadow-[0_0_0_3px_rgba(99,102,241,.12)] max-[550px]:h-[52px] max-[550px]:pl-[44px] max-[550px]:text-[14px] max-[380px]:h-[50px] max-[380px]:pl-[42px] max-[380px]:text-[13px]"
+              style="font-family: inherit; padding: 0 16px 0 46px;"
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- ===================================================
+             PASSWORD
+        ==================================================== -->
+
+        <div class="w-full mb-[22px] box-border max-[550px]:mb-[18px]">
+
+          <label
+            for="password"
+            class="block text-[#d1d5db] text-[14px] font-semibold mb-[9px] max-[550px]:text-[13px] max-[550px]:mb-[8px]"
+          >
+            Password
+          </label>
+
+          <div class="input-wrapper relative w-full box-border">
+
+            <span class="absolute left-[16px] top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#667085] flex items-center justify-center z-[1] pointer-events-none max-[550px]:left-[14px] max-[550px]:w-[17px] max-[550px]:h-[17px] max-[380px]:left-[13px] max-[380px]:w-[16px] max-[380px]:h-[16px]" aria-hidden="true">
+
+              <svg
+                class="w-[18px] h-[18px] block max-[550px]:w-[17px] max-[550px]:h-[17px] max-[380px]:w-[16px] max-[380px]:h-[16px]"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+
+                <rect
+                  x="5"
+                  y="10"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+
+                <path
+                  d="M8 10V7.5C8 5.3 9.8 3.5 12 3.5C14.2 3.5 16 5.3 16 7.5V10"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+
+                <circle
+                  cx="12"
+                  cy="15"
+                  r="1"
+                  fill="currentColor"
+                />
+
+              </svg>
+
+            </span>
+
+            <input
+              id="password"
+              type="password"
+              name="password"
+              [(ngModel)]="password"
+              placeholder="Create a password"
+              autocomplete="new-password"
+              class="block w-full max-w-full h-[54px] box-border rounded-[12px] border border-[#273142] bg-[#0d121c] text-white outline-none text-[15px] transition-[border-color,box-shadow,background] duration-200 ease-in-out placeholder:text-[#566174] focus:border-[#6366f1] focus:bg-[#0e1420] focus:shadow-[0_0_0_3px_rgba(99,102,241,.12)] max-[550px]:h-[52px] max-[550px]:pl-[44px] max-[550px]:text-[14px] max-[380px]:h-[50px] max-[380px]:pl-[42px] max-[380px]:text-[13px]"
+              style="font-family: inherit; padding: 0 16px 0 46px;"
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- ===================================================
+             CONFIRM PASSWORD
+        ==================================================== -->
+
+        <div class="w-full mb-[22px] box-border max-[550px]:mb-[18px]">
+
+          <label
+            for="confirmPassword"
+            class="block text-[#d1d5db] text-[14px] font-semibold mb-[9px] max-[550px]:text-[13px] max-[550px]:mb-[8px]"
+          >
+            Confirm password
+          </label>
+
+          <div class="input-wrapper relative w-full box-border">
+
+            <span class="absolute left-[16px] top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#667085] flex items-center justify-center z-[1] pointer-events-none max-[550px]:left-[14px] max-[550px]:w-[17px] max-[550px]:h-[17px] max-[380px]:left-[13px] max-[380px]:w-[16px] max-[380px]:h-[16px]" aria-hidden="true">
+
+              <svg
+                class="w-[18px] h-[18px] block max-[550px]:w-[17px] max-[550px]:h-[17px] max-[380px]:w-[16px] max-[380px]:h-[16px]"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+
+                <rect
+                  x="5"
+                  y="10"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+
+                <path
+                  d="M8 10V7.5C8 5.3 9.8 3.5 12 3.5C14.2 3.5 16 5.3 16 7.5V10"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+
+                <circle
+                  cx="12"
+                  cy="15"
+                  r="1"
+                  fill="currentColor"
+                />
+
+              </svg>
+
+            </span>
+
+            <input
+              id="confirmPassword"
+              type="password"
+              name="confirmPassword"
+              [(ngModel)]="confirmPassword"
+              placeholder="Re-enter your password"
+              autocomplete="new-password"
+              class="block w-full max-w-full h-[54px] box-border rounded-[12px] border border-[#273142] bg-[#0d121c] text-white outline-none text-[15px] transition-[border-color,box-shadow,background] duration-200 ease-in-out placeholder:text-[#566174] focus:border-[#6366f1] focus:bg-[#0e1420] focus:shadow-[0_0_0_3px_rgba(99,102,241,.12)] max-[550px]:h-[52px] max-[550px]:pl-[44px] max-[550px]:text-[14px] max-[380px]:h-[50px] max-[380px]:pl-[42px] max-[380px]:text-[13px]"
+              style="font-family: inherit; padding: 0 16px 0 46px;"
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- ===================================================
+             PASSWORD STRENGTH
+        ==================================================== -->
+
+        <div
+          class="w-full -mt-[8px] mb-[20px] box-border"
+          *ngIf="password"
+        >
+
+          <div class="flex justify-between items-center gap-[10px] text-[12px] text-[#737f91] mb-[7px]">
+
+            <span>
+              Password strength
+            </span>
+
+            <span
+              class="font-bold whitespace-nowrap"
+              [class]="
+                passwordStrength === 'Weak' ? 'text-[#ef4444]' :
+                passwordStrength === 'Medium' ? 'text-[#f59e0b]' :
+                passwordStrength === 'Strong' ? 'text-[#22c55e]' : ''
+              "
+            >
+              {{ passwordStrength }}
+            </span>
+
+          </div>
+
+
+          <div class="w-full h-[5px] rounded-[10px] bg-[#202938] overflow-hidden">
+
+            <div
+              class="h-full rounded-[10px] transition-[width,background] duration-300 ease-in-out"
+              [class]="
+                passwordStrength === 'Weak' ? 'bg-[#ef4444]' :
+                passwordStrength === 'Medium' ? 'bg-[#f59e0b]' :
+                passwordStrength === 'Strong' ? 'bg-[#22c55e]' : ''
+              "
+              [style.width.%]="
+                passwordStrength === 'Weak'
+                  ? 33
+                  : passwordStrength === 'Medium'
+                  ? 66
+                  : 100
+              "
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ===================================================
+             PASSWORD REQUIREMENTS
+        ==================================================== -->
+
+        <div class="w-full box-border p-[15px] mb-[20px] bg-[#0c111a] border border-[#202938] rounded-[12px] max-[550px]:p-[13px] max-[550px]:mb-[18px]">
+
+          <p class="text-[#9ca3af] text-[12px] mt-0 mb-[10px] mx-0 font-semibold">
+            Password requirements
+          </p>
+
+
+          <div
+            class="inline-block w-1/2 box-border text-[12px] mb-[7px] pr-[5px] align-top max-[550px]:w-full max-[550px]:text-[11px] max-[550px]:mb-[6px]"
+            [class]="passwordLength ? 'text-[#22c55e]' : 'text-[#667085]'"
+          >
+
+            <span class="mr-[5px]">
+              {{ passwordLength ? '✓' : '○' }}
+            </span>
+
+            8+ characters
+
+          </div>
+
+
+          <div
+            class="inline-block w-1/2 box-border text-[12px] mb-[7px] pr-[5px] align-top max-[550px]:w-full max-[550px]:text-[11px] max-[550px]:mb-[6px]"
+            [class]="hasUppercase ? 'text-[#22c55e]' : 'text-[#667085]'"
+          >
+
+            <span class="mr-[5px]">
+              {{ hasUppercase ? '✓' : '○' }}
+            </span>
+
+            Uppercase letter
+
+          </div>
+
+
+          <div
+            class="inline-block w-1/2 box-border text-[12px] mb-[7px] pr-[5px] align-top max-[550px]:w-full max-[550px]:text-[11px] max-[550px]:mb-[6px]"
+            [class]="hasLowercase ? 'text-[#22c55e]' : 'text-[#667085]'"
+          >
+
+            <span class="mr-[5px]">
+              {{ hasLowercase ? '✓' : '○' }}
+            </span>
+
+            Lowercase letter
+
+          </div>
+
+
+          <div
+            class="inline-block w-1/2 box-border text-[12px] mb-[7px] pr-[5px] align-top max-[550px]:w-full max-[550px]:text-[11px] max-[550px]:mb-[6px]"
+            [class]="hasNumber ? 'text-[#22c55e]' : 'text-[#667085]'"
+          >
+
+            <span class="mr-[5px]">
+              {{ hasNumber ? '✓' : '○' }}
+            </span>
+
+            Number
+
+          </div>
+
+
+          <div
+            class="inline-block w-1/2 box-border text-[12px] mb-[7px] pr-[5px] align-top max-[550px]:w-full max-[550px]:text-[11px] max-[550px]:mb-[6px]"
+            [class]="hasSpecial ? 'text-[#22c55e]' : 'text-[#667085]'"
+          >
+
+            <span class="mr-[5px]">
+              {{ hasSpecial ? '✓' : '○' }}
+            </span>
+
+            Special character
+
+          </div>
+
+        </div>
+
+
+        <!-- ===================================================
+             ERROR
+        ==================================================== -->
+
+        <div
+          class="w-full box-border bg-[rgba(239,68,68,0.1)] border border-[rgba(239,68,68,0.25)] text-[#f87171] p-[12px] rounded-[10px] text-[13px] leading-[1.4] mb-[16px] break-words"
+          *ngIf="registerError()"
+        >
+
+          {{ registerError() }}
+
+        </div>
+
+
+        <!-- ===================================================
+             REGISTER BUTTON
+        ==================================================== -->
+
+        <button
+          type="submit"
+          class="group w-full h-[56px] box-border border-0 rounded-[12px] text-white text-[16px] font-bold cursor-pointer flex items-center justify-center gap-[12px] m-0 appearance-none [background:linear-gradient(135deg,#6366f1,#4f46e5)] transition-[transform,box-shadow,opacity] duration-[250ms] ease-in-out shadow-[0_12px_30px_rgba(79,70,229,.25)] hover:-translate-y-[2px] hover:shadow-[0_16px_35px_rgba(79,70,229,.35)] active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:!translate-y-0 focus-visible:outline-2 focus-visible:outline-[#818cf8] focus-visible:outline-offset-[3px] max-[550px]:h-[54px] max-[550px]:text-[15px]"
+          style="font-family: inherit; padding: 0 20px;"
+          [disabled]="submitting()"
+        >
+
+          <span class="inline-block text-white leading-none">
+            {{ submitting() ? 'Creating account...' : 'Create account' }}
+          </span>
+
+          <span
+            class="inline-flex items-center justify-center text-white text-[21px] leading-none -translate-y-px transition-transform duration-200 ease-in-out group-hover:[transform:translate(3px,-1px)]"
+            aria-hidden="true"
+            *ngIf="!submitting()"
+          >
+            →
+          </span>
+
+        </button>
+
+      </form>
+
+
+      <!-- =====================================================
+           SWITCH TO LOGIN
+      ====================================================== -->
+
+      <div class="text-center text-[#8b95a7] text-[13px] mt-[24px]">
+
+        Already have an account?
+
+        <a routerLink="/login" class="text-[#818cf8] font-semibold no-underline ml-[4px] hover:underline">
+          Log in
+        </a>
+
+      </div>
+
+
+      <!-- =====================================================
+           FOOTER
+      ====================================================== -->
+
+      <div class="text-center text-[#4b5563] text-[11px] mt-[25px] leading-[1.4] max-[550px]:mt-[20px] max-[550px]:text-[10px]">
+
+        <span>
+          Secure Finance Management
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

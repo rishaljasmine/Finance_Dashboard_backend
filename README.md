@@ -1,5 +1,61 @@
 # FinanceDashboard
 
+## Neon PostgreSQL backend
+
+The API in `backend/main.py` stores transactions in Neon PostgreSQL. Do not put
+the Neon connection string in Angular or commit it to source control.
+
+1. Create a project at [Neon](https://neon.tech) and copy its pooled connection string.
+2. Open a terminal in `backend` and install the Python dependencies:
+
+	```bash
+	python -m pip install -r requirements.txt
+	```
+
+3. Copy `.env.example` to `.env` and replace `DATABASE_URL` with the Neon URL.
+4. Start the API:
+
+	```bash
+	uvicorn main:app --reload --port 8000
+	```
+
+Run this SQL once in the Neon SQL Editor to create the `transactions` table:
+
+```sql
+CREATE TABLE IF NOT EXISTS transactions (
+	id BIGSERIAL PRIMARY KEY,
+	type TEXT NOT NULL CHECK (type IN ('income', 'expense')),
+	category TEXT NOT NULL,
+	amount NUMERIC(12, 2) NOT NULL CHECK (amount > 0),
+	transaction_date DATE NOT NULL,
+	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS users (
+	id BIGSERIAL PRIMARY KEY,
+	username TEXT NOT NULL,
+	email TEXT NOT NULL UNIQUE,
+	password_hash TEXT NOT NULL,
+	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
+
+Then check the connection at
+`http://127.0.0.1:8000/api/health`. The API supports `GET /api/transactions?year=2025`
+and `POST /api/transactions`.
+
+Example request body:
+
+```json
+{
+  "type": "expense",
+  "category": "Food",
+  "amount": 2500,
+  "date": "2025-06-20"
+}
+```
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.5.
 
 ## Development server
