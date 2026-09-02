@@ -5,11 +5,8 @@ using Org.BouncyCastle.Crypto.Generators;
 namespace FinanceDashboardApi.Services;
 
 /// <summary>
-/// Mirrors backend/main.py's hash_password/verify_password exactly:
-/// scrypt(N=16384, r=8, p=1, dklen=64) over a 16-byte random salt,
-/// stored as "scrypt$" + urlsafe-base64(salt + digest). Must stay
-/// byte-for-byte compatible with the Python implementation so
-/// accounts created by either backend can log into both.
+/// scrypt(N=16384, r=8, p=1, dklen=64) over a 16-byte random salt, stored as
+/// "scrypt$" + urlsafe-base64(salt + digest).
 /// </summary>
 public static class PasswordHasher
 {
@@ -33,30 +30,18 @@ public static class PasswordHasher
 
     public static bool Verify(string password, string? storedHash)
     {
-        if (string.IsNullOrEmpty(storedHash))
-        {
-            return false;
-        }
+        if (string.IsNullOrEmpty(storedHash)) return false;
 
         try
         {
             var parts = storedHash.Split('$', 2);
-
-            if (parts.Length != 2 || parts[0] != "scrypt")
-            {
-                return false;
-            }
+            if (parts.Length != 2 || parts[0] != "scrypt") return false;
 
             var decoded = Base64Url.Decode(parts[1]);
-
-            if (decoded.Length != SaltLength + DkLen)
-            {
-                return false;
-            }
+            if (decoded.Length != SaltLength + DkLen) return false;
 
             var salt = decoded[..SaltLength];
             var expectedDigest = decoded[SaltLength..];
-
             var actualDigest = SCrypt.Generate(Encoding.UTF8.GetBytes(password), salt, N, R, P, DkLen);
 
             return CryptographicOperations.FixedTimeEquals(actualDigest, expectedDigest);

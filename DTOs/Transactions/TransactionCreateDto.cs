@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FinanceDashboardApi.Models;
+namespace FinanceDashboardApi.DTOs.Transactions;
 
-public class TransactionCreate
+public class TransactionCreateDto
 {
     [Required, RegularExpression("^(income|expense)$")]
     public string Type { get; set; } = "";

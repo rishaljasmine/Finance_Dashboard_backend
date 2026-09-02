@@ -2,15 +2,15 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using FinanceDashboardApi.Services.Interfaces;
 
 namespace FinanceDashboardApi.Services;
 
 /// <summary>
-/// Mirrors backend/main.py's create_token/get_user_from_token: a
-/// base64url(JSON payload) + "." + hex(HMAC-SHA256) token, so tokens
-/// issued by either backend validate against the same AUTH_SECRET.
+/// base64url(JSON payload) + "." + hex(HMAC-SHA256) opaque token, signed
+/// with AUTH_SECRET. Not a JWT — kept intentionally simple/self-contained.
 /// </summary>
-public class TokenService(string authSecret)
+public class TokenService(string authSecret) : ITokenService
 {
     private readonly byte[] _secretBytes = Encoding.UTF8.GetBytes(authSecret);
 
@@ -34,25 +34,13 @@ public class TokenService(string authSecret)
         return $"{payloadEncoded}.{signature}";
     }
 
-    /// <summary>Returns the user id, or null if the token is missing/invalid.</summary>
-    public long? GetUserIdFromAuthHeader(string? authorizationHeader)
+    public long? GetUserIdFromToken(string token)
     {
-        if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
-        {
-            return null;
-        }
-
-        var token = authorizationHeader[7..].Trim();
         var dotIndex = token.IndexOf('.');
-
-        if (dotIndex < 0)
-        {
-            return null;
-        }
+        if (dotIndex < 0) return null;
 
         var payloadEncoded = token[..dotIndex];
         var signature = token[(dotIndex + 1)..];
-
         var expectedSignature = Sign(payloadEncoded);
 
         if (!CryptographicOperations.FixedTimeEquals(
