@@ -1,65 +1,108 @@
-# Finance Dashboard — Backend
+# FinanceDashboard
 
-ASP.NET Core 8 minimal API backend for the [Finance Dashboard](https://github.com/rishaljasmine/Finance_Dashboard) app. Handles authentication (including Google sign-in) and transaction storage against a Postgres database.
+## Neon PostgreSQL backend
 
-## Tech stack
+The API in `backend-dotnet/Program.cs` (ASP.NET Core 8, minimal API) stores
+transactions in Neon PostgreSQL. Do not put the Neon connection string in
+Angular or commit it to source control.
 
-- **ASP.NET Core 8** — minimal API (no MVC controllers)
-- **Npgsql** — Postgres driver
-- **Google.Apis.Auth** — verifies Google Sign-In ID tokens
-- **BouncyCastle.Cryptography** — scrypt password hashing
-- **DotNetEnv** — loads config from a local `.env` file
+1. Create a project at [Neon](https://neon.tech) and copy its pooled connection string.
+2. Open a terminal in `backend-dotnet` and copy `.env.example` to `.env`, then
+   replace `DATABASE_URL` with the Neon URL.
+3. Start the API:
 
-## Setup
+	```bash
+	dotnet run
+	```
 
-1. Install the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
-2. Create a Postgres database — [Neon](https://neon.tech) works well and is free for small projects.
-3. Copy `.env.example` to `.env` and fill in:
+The app creates/migrates the `users` and `transactions` tables itself on
+startup — no manual SQL needed.
 
-   ```
-   DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
-   GOOGLE_CLIENT_ID=            # optional — leave blank to disable Google sign-in
-   AUTH_SECRET=                 # optional — a long random string; has a dev fallback if omitted
-   ```
+Then check the connection at
+`http://127.0.0.1:8001/api/health`. The API supports `GET /api/transactions?year=2025`
+and `POST /api/transactions`.
 
-4. Run it:
+Example request body:
 
-   ```bash
-   dotnet run
-   ```
-
-The `users` and `transactions` tables are created (and migrated) automatically on startup — no manual SQL needed. The API listens on `http://0.0.0.0:8000` by default.
-
-Check it's up at `http://127.0.0.1:8000/api/health`.
-
-## API
-
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| GET | `/api/health` | — | DB connectivity check |
-| POST | `/api/register` | — | Create an account |
-| POST | `/api/login` / `/api/auth/login` | — | Log in with username/email + password |
-| POST | `/api/auth/google` | — | Log in with a Google ID token |
-| GET | `/api/me` | Bearer token | Current user |
-| GET | `/api/transactions/years` | Bearer token | Years that have transaction data |
-| GET | `/api/transactions?year=YYYY` | Bearer token | Transactions for a year |
-| POST | `/api/transactions` | Bearer token | Create a transaction |
-
-Auth uses a signed bearer token (`Authorization: Bearer <token>`) returned from register/login — not JWT, a simpler HMAC-signed payload, but functionally equivalent for this app's needs.
-
-## Project structure
-
-```
-Program.cs            Route definitions, app startup, request handlers
-Data/SqlQueries.cs     Every SQL statement the API runs, in one place
-Models/                Request DTOs (RegisterRequest, TransactionCreate, ...)
-Services/
-  PasswordHasher.cs    scrypt hashing/verification
-  TokenService.cs      Auth token create/verify
-  Base64Url.cs          URL-safe base64 helper
+```json
+{
+  "type": "expense",
+  "category": "Food",
+  "amount": 2500,
+  "date": "2025-06-20"
+}
 ```
 
-## Notes
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.5.
 
-- Password hashing (scrypt, N=16384/r=8/p=1) is byte-for-byte compatible with this project's earlier Python/FastAPI backend, so accounts created under either backend work with both.
-- `AUTH_SECRET` signs login tokens. It has a hardcoded development fallback if left unset — set a real one before deploying anywhere public.
+## Development server
+
+To start a local development server, run:
+
+```bash
+ng serve
+```
+
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+## Code scaffolding
+
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+
+```bash
+ng generate component component-name
+```
+
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+
+```bash
+ng generate --help
+```
+
+## Building
+
+To build the project run:
+
+```bash
+ng build
+```
+
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+
+## Running unit tests
+
+To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+
+```bash
+ng test
+```
+
+## Running end-to-end tests
+
+For end-to-end (e2e) testing, run:
+
+```bash
+ng e2e
+```
+
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+
+to run frontend
+npm start
+
+
+to run backend
+dotnet run
+
+to check the swagger
+http://localhost:8001/swagger/index.html
+
+
+to check api health 
+http://localhost:8001/api/health
+
