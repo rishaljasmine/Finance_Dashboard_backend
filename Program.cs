@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using DotNetEnv;
+using FinanceDashboardApi.Data;
 using FinanceDashboardApi.Models;
 using FinanceDashboardApi.Services;
 using Google.Apis.Auth;
@@ -113,7 +114,7 @@ app.MapGet("/api/health", async (NpgsqlDataSource? db) =>
     try
     {
         await using var connection = await db!.OpenConnectionAsync();
-        await using var command = new NpgsqlCommand("SELECT 1", connection);
+        await using var command = new NpgsqlCommand(SqlQueries.HealthCheck, connection);
         await command.ExecuteScalarAsync();
 
         return Results.Ok(new { status = "ok", database = "connected" });
@@ -147,7 +148,7 @@ app.MapPost("/api/register", async (RegisterRequest request, NpgsqlDataSource? d
         await using var transaction = await connection.BeginTransactionAsync();
 
         await using (var checkUsername = new NpgsqlCommand(
-            "SELECT id FROM users WHERE LOWER(username) = LOWER(@username) LIMIT 1", connection, transaction))
+            SqlQueries.FindUserIdByUsername, connection, transaction))
         {
             checkUsername.Parameters.AddWithValue("username", username);
             if (await checkUsername.ExecuteScalarAsync() is not null)
@@ -157,7 +158,7 @@ app.MapPost("/api/register", async (RegisterRequest request, NpgsqlDataSource? d
         }
 
         await using (var checkEmail = new NpgsqlCommand(
-            "SELECT id FROM users WHERE LOWER(email) = LOWER(@email) LIMIT 1", connection, transaction))
+            SqlQueries.FindUserIdByEmail, connection, transaction))
         {
             checkEmail.Parameters.AddWithValue("email", email);
             if (await checkEmail.ExecuteScalarAsync() is not null)
@@ -166,12 +167,7 @@ app.MapPost("/api/register", async (RegisterRequest request, NpgsqlDataSource? d
             }
         }
 
-        await using var insert = new NpgsqlCommand(
-            """
-            INSERT INTO users (username, email, password_hash)
-            VALUES (@username, @email, @passwordHash)
-            RETURNING id, username, email
-            """, connection, transaction);
+        await using var insert = new NpgsqlCommand(SqlQueries.InsertUser, connection, transaction);
 
         insert.Parameters.AddWithValue("username", username);
         insert.Parameters.AddWithValue("email", email);
@@ -224,8 +220,8 @@ var loginHandler = async (LoginRequest request, NpgsqlDataSource? db, TokenServi
 
         await using var command = new NpgsqlCommand(
             string.IsNullOrEmpty(email)
-                ? "SELECT id, username, email, password_hash FROM users WHERE LOWER(username) = LOWER(@value) LIMIT 1"
-                : "SELECT id, username, email, password_hash FROM users WHERE LOWER(email) = LOWER(@value) LIMIT 1",
+                ? SqlQueries.FindUserByUsernameForLogin
+                : SqlQueries.FindUserByEmailForLogin,
             connection);
 
         command.Parameters.AddWithValue("value", string.IsNullOrEmpty(email) ? username : email);
@@ -315,7 +311,7 @@ app.MapPost("/api/auth/google", async (GoogleLoginRequest request, NpgsqlDataSou
         string storedEmail;
 
         await using (var findBySub = new NpgsqlCommand(
-            "SELECT id, username, email FROM users WHERE google_sub = @sub LIMIT 1", connection, transaction))
+            SqlQueries.FindUserByGoogleSub, connection, transaction))
         {
             findBySub.Parameters.AddWithValue("sub", googleSub);
             await using var reader = await findBySub.ExecuteReaderAsync();
@@ -332,7 +328,7 @@ app.MapPost("/api/auth/google", async (GoogleLoginRequest request, NpgsqlDataSou
                 await reader.CloseAsync();
 
                 await using var findByEmail = new NpgsqlCommand(
-                    "SELECT id, username, email FROM users WHERE LOWER(email) = LOWER(@email) LIMIT 1", connection, transaction);
+                    SqlQueries.FindUserByEmail, connection, transaction);
                 findByEmail.Parameters.AddWithValue("email", email);
                 await using var emailReader = await findByEmail.ExecuteReaderAsync();
 
@@ -344,7 +340,7 @@ app.MapPost("/api/auth/google", async (GoogleLoginRequest request, NpgsqlDataSou
                     await emailReader.CloseAsync();
 
                     await using var link = new NpgsqlCommand(
-                        "UPDATE users SET google_sub = @sub WHERE id = @id", connection, transaction);
+                        SqlQueries.LinkGoogleSubToUser, connection, transaction);
                     link.Parameters.AddWithValue("sub", googleSub);
                     link.Parameters.AddWithValue("id", userId);
                     await link.ExecuteNonQueryAsync();
@@ -356,11 +352,7 @@ app.MapPost("/api/auth/google", async (GoogleLoginRequest request, NpgsqlDataSou
                     var uniqueUsername = await GenerateUniqueUsernameAsync(connection, transaction, name);
 
                     await using var insert = new NpgsqlCommand(
-                        """
-                        INSERT INTO users (username, email, password_hash, google_sub)
-                        VALUES (@username, @email, NULL, @sub)
-                        RETURNING id, username, email
-                        """, connection, transaction);
+                        SqlQueries.InsertGoogleUser, connection, transaction);
                     insert.Parameters.AddWithValue("username", uniqueUsername);
                     insert.Parameters.AddWithValue("email", email);
                     insert.Parameters.AddWithValue("sub", googleSub);
@@ -408,8 +400,7 @@ app.MapGet("/api/me", async (HttpRequest http, NpgsqlDataSource? db, TokenServic
     try
     {
         await using var connection = await db!.OpenConnectionAsync();
-        await using var command = new NpgsqlCommand(
-            "SELECT id, username, email FROM users WHERE id = @id", connection);
+        await using var command = new NpgsqlCommand(SqlQueries.GetUserById, connection);
         command.Parameters.AddWithValue("id", userId.Value);
 
         await using var reader = await command.ExecuteReaderAsync();
@@ -447,13 +438,7 @@ app.MapGet("/api/transactions/years", async (HttpRequest http, NpgsqlDataSource?
     try
     {
         await using var connection = await db!.OpenConnectionAsync();
-        await using var command = new NpgsqlCommand(
-            """
-            SELECT DISTINCT EXTRACT(YEAR FROM transaction_date)::int AS year
-            FROM transactions
-            WHERE user_id = @userId
-            ORDER BY year DESC
-            """, connection);
+        await using var command = new NpgsqlCommand(SqlQueries.GetTransactionYears, connection);
         command.Parameters.AddWithValue("userId", userId.Value);
 
         var years = new List<int>();
@@ -491,14 +476,7 @@ app.MapGet("/api/transactions", async (HttpRequest http, int year, NpgsqlDataSou
     try
     {
         await using var connection = await db!.OpenConnectionAsync();
-        await using var command = new NpgsqlCommand(
-            """
-            SELECT id, type, category, amount, transaction_date
-            FROM transactions
-            WHERE user_id = @userId
-            AND EXTRACT(YEAR FROM transaction_date) = @year
-            ORDER BY transaction_date DESC, id DESC
-            """, connection);
+        await using var command = new NpgsqlCommand(SqlQueries.GetTransactionsForYear, connection);
         command.Parameters.AddWithValue("userId", userId.Value);
         command.Parameters.AddWithValue("year", year);
 
@@ -542,12 +520,7 @@ app.MapPost("/api/transactions", async (HttpRequest http, TransactionCreate tran
     try
     {
         await using var connection = await db!.OpenConnectionAsync();
-        await using var command = new NpgsqlCommand(
-            """
-            INSERT INTO transactions (user_id, type, category, amount, transaction_date)
-            VALUES (@userId, @type, @category, @amount, @date)
-            RETURNING id, type, category, amount, transaction_date
-            """, connection);
+        await using var command = new NpgsqlCommand(SqlQueries.InsertTransaction, connection);
         command.Parameters.AddWithValue("userId", userId.Value);
         command.Parameters.AddWithValue("type", transaction.Type);
         command.Parameters.AddWithValue("category", transaction.Category.Trim());
@@ -636,7 +609,7 @@ static async Task<string> GenerateUniqueUsernameAsync(NpgsqlConnection connectio
     while (true)
     {
         await using var command = new NpgsqlCommand(
-            "SELECT id FROM users WHERE LOWER(username) = LOWER(@candidate) LIMIT 1", connection, transaction);
+            SqlQueries.FindUserIdByUsernameCandidate, connection, transaction);
         command.Parameters.AddWithValue("candidate", candidate);
 
         if (await command.ExecuteScalarAsync() is null)
@@ -654,49 +627,7 @@ static async Task InitializeDatabaseAsync(string connectionString)
     await using var connection = new NpgsqlConnection(connectionString);
     await connection.OpenAsync();
 
-    string[] statements =
-    [
-        """
-        CREATE TABLE IF NOT EXISTS users (
-            id BIGSERIAL PRIMARY KEY,
-            username TEXT NOT NULL,
-            email TEXT NOT NULL UNIQUE,
-            password_hash TEXT NOT NULL,
-            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-            updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-        )
-        """,
-        """
-        CREATE TABLE IF NOT EXISTS transactions (
-            id BIGSERIAL PRIMARY KEY,
-            user_id BIGINT,
-            type TEXT NOT NULL CHECK (type IN ('income', 'expense')),
-            category TEXT NOT NULL,
-            amount NUMERIC(12, 2) NOT NULL CHECK (amount > 0),
-            transaction_date DATE NOT NULL,
-            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-            CONSTRAINT fk_transactions_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-        )
-        """,
-        "ALTER TABLE transactions ADD COLUMN IF NOT EXISTS user_id BIGINT",
-        """
-        DO $$
-        BEGIN
-            IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_transactions_user') THEN
-                ALTER TABLE transactions
-                ADD CONSTRAINT fk_transactions_user
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
-            END IF;
-        END
-        $$;
-        """,
-        "CREATE UNIQUE INDEX IF NOT EXISTS users_username_unique ON users (LOWER(username))",
-        "ALTER TABLE users ALTER COLUMN password_hash DROP NOT NULL",
-        "ALTER TABLE users ADD COLUMN IF NOT EXISTS google_sub TEXT",
-        "CREATE UNIQUE INDEX IF NOT EXISTS users_google_sub_unique ON users (google_sub) WHERE google_sub IS NOT NULL"
-    ];
-
-    foreach (var sql in statements)
+    foreach (var sql in SqlQueries.SchemaStatements)
     {
         await using var command = new NpgsqlCommand(sql, connection);
         await command.ExecuteNonQueryAsync();
