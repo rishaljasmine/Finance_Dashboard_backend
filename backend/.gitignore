@@ -1,7 +1,0 @@
-.env
-__pycache__/
-venv/
-htmlcov/
-.pytest_cache/
-.coverage
-*.log
