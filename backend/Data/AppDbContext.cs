@@ -7,6 +7,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 {
     public DbSet<User> Users => Set<User>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
+    public DbSet<UploadedFile> Files => Set<UploadedFile>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -44,6 +45,30 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.HasOne(t => t.User)
                   .WithMany(u => u.Transactions)
                   .HasForeignKey(t => t.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<UploadedFile>(entity =>
+        {
+            entity.ToTable("files");
+            entity.HasKey(f => f.Id);
+            entity.Property(f => f.Id).HasColumnName("id");
+            entity.Property(f => f.UserId).HasColumnName("user_id");
+            entity.Property(f => f.TransactionId).HasColumnName("transaction_id");
+            entity.Property(f => f.OriginalFileName).HasColumnName("original_file_name").IsRequired();
+            entity.Property(f => f.StoredFileName).HasColumnName("stored_file_name").IsRequired();
+            entity.Property(f => f.ContentType).HasColumnName("content_type").IsRequired();
+            entity.Property(f => f.SizeBytes).HasColumnName("size_bytes");
+            entity.Property(f => f.UploadedAt).HasColumnName("uploaded_at");
+
+            entity.HasOne(f => f.User)
+                  .WithMany()
+                  .HasForeignKey(f => f.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(f => f.Transaction)
+                  .WithMany(t => t.Files)
+                  .HasForeignKey(f => f.TransactionId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
     }

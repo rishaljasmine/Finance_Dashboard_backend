@@ -53,10 +53,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddSingleton(new AuthOptions { AuthSecret = authSecret, GoogleClientId = googleClientId });
 builder.Services.AddSingleton<ITokenService>(new TokenService(authSecret));
 
+var storageRoot = Environment.GetEnvironmentVariable("FILE_STORAGE_ROOT")
+    ?? Path.Combine(builder.Environment.ContentRootPath, "Storage", "Uploads");
+builder.Services.AddSingleton(new FileStorageOptions { StorageRoot = storageRoot });
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<IFileRepository, FileRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
 builder.Services
     .AddAuthentication(TokenAuthenticationHandler.SchemeName)
@@ -148,5 +154,7 @@ else
 
 Console.WriteLine("Finance Dashboard API started.");
 
-var listenUrl = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://0.0.0.0:8007";
+var listenUrl = Environment.GetEnvironmentVariable("ASPNETCORE_URLS")
+    ?? "http://0.0.0.0:8002";
+
 app.Run(listenUrl);

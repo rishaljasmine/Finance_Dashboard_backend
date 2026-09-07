@@ -5,7 +5,7 @@ namespace FinanceDashboardApi.Common;
 
 public static class ConnectionStringBuilder
 {
-    /// <summary>Converts a postgres:// DATABASE_URL (Neon/Heroku-style) into an Npgsql connection string.</summary>
+    /// <summary>Converts a postgres:// DATABASE_URL (Supabase/Heroku-style) into an Npgsql connection string.</summary>
     public static string FromDatabaseUrl(string databaseUrl)
     {
         var uri = new Uri(databaseUrl);

@@ -1,14 +1,18 @@
 # FinanceDashboard
 
-## Neon PostgreSQL backend
+## Supabase PostgreSQL backend
 
-The API in `backend-dotnet/Program.cs` (ASP.NET Core 8, minimal API) stores
-transactions in Neon PostgreSQL. Do not put the Neon connection string in
-Angular or commit it to source control.
+The API in `FinanceDashboardApi/Program.cs` (ASP.NET Core 8) stores
+transactions in Supabase PostgreSQL. Do not put the Supabase connection
+string in Angular or commit it to source control.
 
-1. Create a project at [Neon](https://neon.tech) and copy its pooled connection string.
-2. Open a terminal in `backend-dotnet` and copy `.env.example` to `.env`, then
-   replace `DATABASE_URL` with the Neon URL.
+1. Create a project at [Supabase](https://supabase.com) and copy its
+   **session pooler** connection string (Project Settings → Database →
+   Connection String) — not the direct connection, which is IPv6-only.
+2. Open a terminal in `FinanceDashboardApi` and copy `.env.example` to
+   `.env`, then replace `DATABASE_URL` with the Supabase URL. Any `@`, `#`,
+   or other special characters in the password must be percent-encoded
+   (e.g. `@` → `%40`, `#` → `%23`).
 3. Start the API:
 
 	```bash
@@ -19,7 +23,7 @@ The app creates/migrates the `users` and `transactions` tables itself on
 startup — no manual SQL needed.
 
 Then check the connection at
-`http://127.0.0.1:8001/api/health`. The API supports `GET /api/transactions?year=2025`
+`http://127.0.0.1:8002/api/health`. The API supports `GET /api/transactions?year=2025`
 and `POST /api/transactions`.
 
 Example request body:
@@ -100,9 +104,9 @@ to run backend
 dotnet run
 
 to check the swagger
-http://localhost:8001/swagger/index.html
+http://localhost:8002/swagger/index.html
 
 
 to check api health 
-http://localhost:8001/api/health
+http://localhost:8002/api/health
 

@@ -1,0 +1,67 @@
+<!doctype html>
+<!--
+  Proof that this is a real, framework-agnostic microfrontend: this page
+  has no React, no Angular, no build step of its own — just two <script>/
+  <link> tags pointing at the bundle produced by `npm run build:element`.
+
+  Open this file (after running that build) directly in a browser, or via
+  `npx serve .` from this folder.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>finova-sidebar — plain HTML host</title>
+    <link rel="stylesheet" href="/dist-element/sidebar-mfe.css" />
+    <style>
+      html, body { margin: 0; min-height: 100%; background: #080b12; }
+      html.light, html.light body { background: #f4f6fa; }
+      main {
+        margin-left: 245px;
+        padding: 32px;
+        font-family: system-ui, sans-serif;
+        color: #e5e7eb;
+      }
+      html.light main { color: #1f2430; }
+      button {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid #253044;
+        background: #101722;
+        color: #aab4c4;
+        cursor: pointer;
+      }
+      #log { margin-top: 16px; font-size: 13px; white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <!-- The whole "microfrontend" in one tag. -->
+    <finova-sidebar active-section="home" selected-chart="bar"></finova-sidebar>
+
+    <main>
+      <button id="theme-toggle" type="button">Toggle light/dark</button>
+      <h1>Plain HTML host page</h1>
+      <p>No React, no Angular here — just the custom element and native DOM events.</p>
+      <pre id="log">(click something in the sidebar)</pre>
+    </main>
+
+    <script type="module" src="/dist-element/finova-sidebar.js"></script>
+    <script>
+      const sidebar = document.querySelector('finova-sidebar');
+      const log = document.getElementById('log');
+
+      sidebar.addEventListener('navigate', (event) => {
+        sidebar.setAttribute('active-section', event.detail.section);
+        log.textContent = 'navigate -> ' + JSON.stringify(event.detail);
+      });
+
+      sidebar.addEventListener('chart-select', (event) => {
+        sidebar.setAttribute('selected-chart', event.detail.chart);
+        log.textContent = 'chart-select -> ' + JSON.stringify(event.detail);
+      });
+
+      document.getElementById('theme-toggle').addEventListener('click', () => {
+        document.documentElement.classList.toggle('light');
+      });
+    </script>
+  </body>
+</html>

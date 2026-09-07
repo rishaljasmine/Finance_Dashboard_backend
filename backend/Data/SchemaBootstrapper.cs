@@ -35,6 +35,23 @@ public static class SchemaBootstrapper
             CONSTRAINT fk_transactions_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )
         """,
+        """
+        CREATE TABLE IF NOT EXISTS files (
+            id BIGSERIAL PRIMARY KEY,
+            user_id BIGINT NOT NULL,
+            transaction_id BIGINT,
+            original_file_name TEXT NOT NULL,
+            stored_file_name TEXT NOT NULL,
+            content_type TEXT NOT NULL,
+            size_bytes BIGINT NOT NULL,
+            uploaded_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            CONSTRAINT fk_files_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            CONSTRAINT fk_files_transaction FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE
+        )
+        """,
+        // Defensive: fills in transaction_id for a files table that was already
+        // created by an earlier boot, before this column existed.
+        "ALTER TABLE files ADD COLUMN IF NOT EXISTS transaction_id BIGINT REFERENCES transactions(id) ON DELETE CASCADE",
         "CREATE UNIQUE INDEX IF NOT EXISTS users_username_unique ON users (LOWER(username))",
         "CREATE UNIQUE INDEX IF NOT EXISTS users_google_sub_unique ON users (google_sub) WHERE google_sub IS NOT NULL"
     ];

@@ -1,4 +1,5 @@
 using FinanceDashboardApi.Common;
+using FinanceDashboardApi.DTOs.Files;
 using FinanceDashboardApi.DTOs.Transactions;
 using FinanceDashboardApi.Entities;
 using FinanceDashboardApi.Repositories.Interfaces;
@@ -65,6 +66,14 @@ public class TransactionService(ITransactionRepository repository) : ITransactio
         Type = t.Type,
         Category = t.Category,
         Amount = t.Amount,
-        Date = t.TransactionDate.ToString("yyyy-MM-dd")
+        Date = t.TransactionDate.ToString("yyyy-MM-dd"),
+        Files = t.Files.Select(f => new FileResponseDto
+        {
+            Id = f.Id,
+            FileName = f.OriginalFileName,
+            ContentType = f.ContentType,
+            SizeBytes = f.SizeBytes,
+            UploadedAt = f.UploadedAt.ToString("O")
+        }).ToList()
     };
 }

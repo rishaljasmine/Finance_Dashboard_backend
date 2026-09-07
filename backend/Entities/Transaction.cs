@@ -11,4 +11,5 @@ public class Transaction
     public DateTimeOffset CreatedAt { get; set; }
 
     public User? User { get; set; }
+    public ICollection<UploadedFile> Files { get; set; } = new List<UploadedFile>();
 }

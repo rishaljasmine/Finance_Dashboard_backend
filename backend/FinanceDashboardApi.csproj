@@ -15,4 +15,13 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Uploaded files land here at runtime — never part of the build, even
+         if a user happens to upload something with a .cs/.resx/etc extension. -->
+    <Compile Remove="Storage/**" />
+    <Content Remove="Storage/**" />
+    <None Remove="Storage/**" />
+    <EmbeddedResource Remove="Storage/**" />
+  </ItemGroup>
+
 </Project>

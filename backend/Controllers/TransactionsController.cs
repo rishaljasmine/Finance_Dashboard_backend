@@ -9,7 +9,7 @@ namespace FinanceDashboardApi.Controllers;
 [Authorize]
 [ApiController]
 [Route("/api/transactions")]
-public class TransactionsController(ITransactionService transactionService) : ControllerBase
+public class TransactionsController(ITransactionService transactionService, IFileStorageService fileStorageService) : ControllerBase
 {
     private long UserId => long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
@@ -40,6 +40,17 @@ public class TransactionsController(ITransactionService transactionService) : Co
     public async Task<IActionResult> Create(TransactionCreateDto request)
     {
         var result = await transactionService.CreateAsync(UserId, request);
+        return result.Success
+            ? StatusCode(201, result.Data)
+            : Problem(statusCode: result.ErrorStatusCode, detail: result.ErrorMessage);
+    }
+
+    [HttpPost("{id:long}/files")]
+    [RequestSizeLimit(2_147_483_648)] // 2 GB
+    [RequestFormLimits(MultipartBodyLengthLimit = 2_147_483_648)] // 2 GB — Kestrel's multipart parser has its own, separate 128 MB default
+    public async Task<IActionResult> UploadFile(long id, IFormFile? file)
+    {
+        var result = await fileStorageService.UploadAsync(UserId, id, file);
         return result.Success
             ? StatusCode(201, result.Data)
             : Problem(statusCode: result.ErrorStatusCode, detail: result.ErrorMessage);

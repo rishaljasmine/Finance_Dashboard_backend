@@ -1,6 +1,6 @@
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpEventType } from '@angular/common/http';
@@ -62,7 +62,12 @@ const CATEGORY_COLORS = [
   ],
 
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css'
+  styleUrl: './dashboard.css',
+
+  // Allows <finova-sidebar> (a custom element defined by the sidebar
+  // microfrontend, loaded via a plain <script> in index.html) in the
+  // template without Angular complaining that it's an unknown element.
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class DashboardComponent implements OnInit {
 
@@ -78,6 +83,13 @@ export class DashboardComponent implements OnInit {
   // =====================================================
   // SIDEBAR
   // =====================================================
+  //
+  // The sidebar itself (collapse state, mobile drawer, the Financial
+  // Overview submenu) is now owned by the <finova-sidebar> microfrontend
+  // — see dashboard.html and onSidebarNavigate/onSidebarChartSelect/
+  // onSidebarLayoutChange below. sidebarCollapsed/mobileSidebarOpen still
+  // live here only because <main>'s margin depends on them; they're kept
+  // in sync via the sidebar's layout-change event, never set directly.
 
   sidebarCollapsed = false;
   mobileSidebarOpen = false;
@@ -88,7 +100,6 @@ export class DashboardComponent implements OnInit {
   // =====================================================
 
   activeSection: DashboardSection = 'home';
-  overviewMenuOpen = false;
   summaryTab: SummaryTab = 'balance';
 
 
@@ -359,40 +370,6 @@ export class DashboardComponent implements OnInit {
 
 
   // =====================================================
-  // SIDEBAR TOGGLE
-  // =====================================================
-
-  toggleSidebar(): void {
-
-    if (window.matchMedia('(max-width: 900px)').matches) {
-      this.mobileSidebarOpen = !this.mobileSidebarOpen;
-      return;
-    }
-
-    this.sidebarCollapsed = !this.sidebarCollapsed;
-
-  }
-
-
-  // =====================================================
-  // CLOSE SIDEBAR
-  // =====================================================
-
-  closeSidebar(): void {
-
-    this.sidebarCollapsed = true;
-
-  }
-
-
-  closeMobileSidebar(): void {
-
-    this.mobileSidebarOpen = false;
-
-  }
-
-
-  // =====================================================
   // SECTION NAVIGATION (sidebar directory)
   // =====================================================
 
@@ -401,10 +378,6 @@ export class DashboardComponent implements OnInit {
   ): void {
 
     this.activeSection = section;
-
-    if (window.matchMedia('(max-width: 900px)').matches) {
-      this.mobileSidebarOpen = false;
-    }
 
   }
 
@@ -418,61 +391,42 @@ export class DashboardComponent implements OnInit {
   }
 
 
-  onDashboardIconClick(): void {
+  // =====================================================
+  // SIDEBAR MICROFRONTEND EVENTS
+  // =====================================================
+  //
+  // <finova-sidebar> (see dashboard.html) reports what it wants to happen
+  // via DOM CustomEvents instead of mutating this component's state
+  // directly — the sidebar owns its own collapse/mobile-drawer/submenu
+  // state internally and only tells us the three things we actually need.
 
-    if (window.matchMedia('(max-width: 900px)').matches) {
+  onSidebarNavigate(event: Event): void {
 
-      // On mobile, the collapsed rail shows only this icon, so it
-      // doubles as the menu opener when the drawer is closed.
-      if (!this.mobileSidebarOpen) {
-        this.mobileSidebarOpen = true;
-        return;
-      }
+    const section =
+      (event as CustomEvent<{ section: DashboardSection }>).detail.section;
 
-      this.selectSection('home');
-      return;
-    }
-
-    // Desktop: mirror the same open/close toggle — a collapsed rail
-    // expands, an expanded sidebar navigates home and collapses back.
-    if (this.sidebarCollapsed) {
-      this.sidebarCollapsed = false;
-      return;
-    }
-
-    this.activeSection = 'home';
-    this.sidebarCollapsed = true;
+    this.selectSection(section);
 
   }
 
 
-  toggleOverviewMenu(event: Event): void {
+  onSidebarChartSelect(event: Event): void {
 
-    event.stopPropagation();
+    const chart =
+      (event as CustomEvent<{ chart: DashboardChartType }>).detail.chart;
 
-    this.overviewMenuOpen = !this.overviewMenuOpen;
-
-  }
-
-
-  selectOverviewSection(): void {
-
-    // Deliberately not calling selectSection() here: on mobile that
-    // would auto-close the drawer, but the user's intent when tapping
-    // this row is to browse the chart submenu it's about to reveal —
-    // same as tapping the chevron directly, which stays open.
-    this.activeSection = 'overview';
-    this.overviewMenuOpen = true;
+    this.selectChart(chart);
 
   }
 
 
-  selectChartFromSidebar(
-    type: DashboardChartType
-  ): void {
+  onSidebarLayoutChange(event: Event): void {
 
-    this.selectChart(type);
-    this.selectSection('overview');
+    const { collapsed, mobileOpen } =
+      (event as CustomEvent<{ collapsed: boolean; mobileOpen: boolean }>).detail;
+
+    this.sidebarCollapsed = collapsed;
+    this.mobileSidebarOpen = mobileOpen;
 
   }
 

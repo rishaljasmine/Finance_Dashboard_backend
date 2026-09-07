@@ -90,7 +90,7 @@ export class FinanceService {
   // ===================================================
 
   private readonly baseUrl =
-    'http://127.0.0.1:8001/api';
+    'http://127.0.0.1:8002/api';
 
 
   private readonly transactionsUrl =

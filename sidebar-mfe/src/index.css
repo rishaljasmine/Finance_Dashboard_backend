@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+/* Same trick as the Angular host: night mode is the default look, and
+   `light:` utilities only apply once an ancestor has a `.light` class.
+   As long as the host page toggles `.light` on <html> the same way the
+   Angular app's ThemeService does, this sidebar's theme stays in sync
+   automatically — no cross-framework wiring needed for it. */
+@custom-variant light (&:where(.light, .light *));
