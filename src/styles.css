@@ -3,6 +3,12 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 
+/* Night mode (dark) is the default look everywhere already — this variant
+   is purely additive: elements only pick up `light:` utilities once the
+   root has a `.light` class, applied by ThemeService. Nothing changes for
+   anyone who never touches the toggle. */
+@custom-variant light (&:where(.light, .light *));
+
 /* You can add global styles to this file, and also import other style files */
 html,
 body {
@@ -11,6 +17,11 @@ body {
   width: 100%;
   min-height: 100%;
   background: #080b12;
+}
+
+html.light,
+html.light body {
+  background: #f4f6fa;
 }
 
 body {

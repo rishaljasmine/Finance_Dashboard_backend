@@ -2,30 +2,45 @@
    GMAIL / AUTOFILL FIX
    =====================================================
    Vendor-specific browser autofill styling — not expressible
-   as Tailwind utility classes, kept as plain CSS.
+   as Tailwind utility classes, kept as plain CSS. Scoped to the
+   :-webkit-autofill pseudo-class only, so it doesn't fight with
+   the field's normal/focus background set via Tailwind, and
+   scoped per theme so it matches whichever mode is active.
    ===================================================== */
 
-.input-wrapper input[type="email"],
-.input-wrapper input[type="text"],
-.input-wrapper input[type="password"] {
-  background: #0d121c !important;
-  color: #ffffff !important;
-}
-
-.input-wrapper input:-webkit-autofill,
-.input-wrapper input:-webkit-autofill:hover,
-.input-wrapper input:-webkit-autofill:focus,
-.input-wrapper input:-webkit-autofill:active {
+html:not(.light) .input-wrapper input:-webkit-autofill,
+html:not(.light) .input-wrapper input:-webkit-autofill:hover,
+html:not(.light) .input-wrapper input:-webkit-autofill:focus,
+html:not(.light) .input-wrapper input:-webkit-autofill:active {
 
   -webkit-text-fill-color: #ffffff !important;
 
   -webkit-box-shadow:
-    0 0 0 1000px #0d121c inset !important;
+    0 0 0 1000px #141a29 inset !important;
 
   box-shadow:
-    0 0 0 1000px #0d121c inset !important;
+    0 0 0 1000px #141a29 inset !important;
 
-  background-color: #0d121c !important;
+  background-color: #141a29 !important;
+
+  transition:
+    background-color 9999s ease-in-out 0s;
+}
+
+html.light .input-wrapper input:-webkit-autofill,
+html.light .input-wrapper input:-webkit-autofill:hover,
+html.light .input-wrapper input:-webkit-autofill:focus,
+html.light .input-wrapper input:-webkit-autofill:active {
+
+  -webkit-text-fill-color: #111827 !important;
+
+  -webkit-box-shadow:
+    0 0 0 1000px #f3f4f6 inset !important;
+
+  box-shadow:
+    0 0 0 1000px #f3f4f6 inset !important;
+
+  background-color: #f3f4f6 !important;
 
   transition:
     background-color 9999s ease-in-out 0s;

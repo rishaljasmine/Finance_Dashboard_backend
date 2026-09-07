@@ -1,0 +1,162 @@
+/* =====================================================
+   HERO ANIMATIONS
+   =====================================================
+   Kept as plain CSS keyframes — Tailwind utilities can trigger
+   an animation but can't define custom @keyframes per element.
+   ===================================================== */
+
+@keyframes bar-grow {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes bar-pulse {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.92); }
+}
+
+@keyframes draw-line {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes dot-pop {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.home-bar {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  animation:
+    bar-grow 0.6s cubic-bezier(.34,1.56,.64,1) both,
+    bar-pulse 2.8s ease-in-out 1s infinite;
+}
+
+.home-bar:nth-child(1) { animation-delay: 0s, 1s; }
+.home-bar:nth-child(2) { animation-delay: 0.08s, 1.15s; }
+.home-bar:nth-child(3) { animation-delay: 0.16s, 1.3s; }
+.home-bar:nth-child(4) { animation-delay: 0.24s, 1.45s; }
+.home-bar:nth-child(5) { animation-delay: 0.32s, 1.6s; }
+
+.home-trend-line {
+  stroke-dasharray: 220;
+  stroke-dashoffset: 220;
+  animation: draw-line 1.3s ease-out 0.5s forwards;
+}
+
+.home-trend-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dot-pop 0.4s ease-out 1.8s both;
+}
+
+.home-title {
+  opacity: 0;
+  animation: fade-in-up 0.7s ease-out 0.15s forwards;
+}
+
+.home-tagline {
+  opacity: 0;
+  animation: fade-in-up 0.7s ease-out 0.95s forwards;
+}
+
+.home-subtitle {
+  opacity: 0;
+  animation: fade-in-up 0.7s ease-out 1.2s forwards;
+}
+
+
+/* =====================================================
+   AMBIENT BACKGROUND BLOBS
+   ===================================================== */
+
+@keyframes drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(24px, 18px) scale(1.08); }
+}
+
+@keyframes drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-20px, 16px) scale(1.05); }
+}
+
+.home-blob-a {
+  animation: drift-a 9s ease-in-out infinite;
+}
+
+.home-blob-b {
+  animation: drift-b 11s ease-in-out infinite;
+}
+
+
+/* =====================================================
+   THEME TOGGLE ENTRANCE
+   ===================================================== */
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.6) rotate(-45deg); }
+  to { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.home-toggle {
+  animation: pop-in 0.5s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+
+/* =====================================================
+   CTA PANEL + BUTTONS
+   ===================================================== */
+
+@keyframes panel-rise {
+  from { opacity: 0; transform: translateY(36px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.home-panel {
+  animation: panel-rise 0.8s cubic-bezier(.22,1,.36,1) 0.35s both;
+}
+
+.home-btn {
+  opacity: 0;
+  animation: fade-in-up 0.6s ease-out both;
+}
+
+.home-btn:nth-child(1) { animation-delay: 1.45s; }
+.home-btn:nth-child(2) { animation-delay: 1.6s; }
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 12px 30px rgba(79,70,229,.3); }
+  50% { box-shadow: 0 12px 42px rgba(79,70,229,.55); }
+}
+
+.home-btn-primary {
+  animation:
+    fade-in-up 0.6s ease-out 1.45s both,
+    glow-pulse 2.6s ease-in-out 2.2s infinite;
+}
+
+
+/* =====================================================
+   FLOATING DECORATIVE DOTS
+   ===================================================== */
+
+@keyframes float-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.home-dot {
+  opacity: 0;
+  animation:
+    fade-in-up 0.5s ease-out both,
+    float-bob 3.2s ease-in-out infinite;
+}
+
+.home-dot:nth-child(1) { animation-delay: 0.6s, 2s; }
+.home-dot:nth-child(2) { animation-delay: 0.72s, 2.3s; }
+.home-dot:nth-child(3) { animation-delay: 0.84s, 2.6s; }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { FinanceService, AuthUser } from '../finance.service';
@@ -18,7 +18,7 @@ declare const google: any;
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
-export class LoginComponent implements AfterViewInit {
+export class LoginComponent {
 
   username = '';
   email = '';
@@ -36,6 +36,10 @@ export class LoginComponent implements AfterViewInit {
   registeredMessage = signal('');
   submitting = signal(false);
 
+  // Shows a skeleton in place of the form briefly on first load,
+  // Instagram-style, instead of an instant flash of content.
+  pageReady = signal(false);
+
   constructor(
     private router: Router,
     private financeService: FinanceService
@@ -48,13 +52,25 @@ export class LoginComponent implements AfterViewInit {
         'Account created successfully. Please log in.'
       );
     }
+
+    setTimeout(() => {
+
+      this.pageReady.set(true);
+
+      // The #google-signin-button container only exists once the
+      // skeleton above is swapped out for the real form, so this has
+      // to wait for that DOM update rather than running from
+      // ngAfterViewInit (which fires while the skeleton is still up).
+      setTimeout(() => this.initializeGoogleSignIn(), 0);
+
+    }, 700);
   }
 
   // =====================================================
   // GOOGLE SIGN-IN
   // =====================================================
 
-  ngAfterViewInit(): void {
+  private initializeGoogleSignIn(): void {
 
     if (!this.googleAvailable) {
       return;

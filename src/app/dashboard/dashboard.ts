@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpEventType } from '@angular/common/http';
 
 import { BaseChartDirective } from 'ng2-charts';
 import {
@@ -12,14 +13,30 @@ import {
 
 import {
   FinanceService,
-  Transaction
+  Transaction,
+  UploadedFileInfo
 } from '../finance.service';
+import { ThemeService } from '../theme.service';
 
 type DashboardChartType =
   | 'bar'
   | 'line'
   | 'pie'
   | '3dline';
+
+type DashboardSection =
+  | 'home'
+  | 'summary'
+  | 'overview'
+  | 'transactions'
+  | 'expenses'
+  | 'files';
+
+type SummaryTab =
+  | 'balance'
+  | 'overview'
+  | 'transactions'
+  | 'expenses';
 
 const CATEGORY_COLORS = [
   '#6366f1',
@@ -67,6 +84,15 @@ export class DashboardComponent implements OnInit {
 
 
   // =====================================================
+  // SIDEBAR NAVIGATION (section directory)
+  // =====================================================
+
+  activeSection: DashboardSection = 'home';
+  overviewMenuOpen = false;
+  summaryTab: SummaryTab = 'balance';
+
+
+  // =====================================================
   // PROFILE
   // =====================================================
 
@@ -86,6 +112,8 @@ export class DashboardComponent implements OnInit {
   // Populated from the years that actually have transactions for
   // this user (falls back to the current year if there are none yet).
   years = signal<number[]>([this.currentCalendarYear]);
+
+  yearMenuOpen = signal(false);
 
 
   // =====================================================
@@ -168,10 +196,26 @@ export class DashboardComponent implements OnInit {
   addSubmitting = signal(false);
   addError = signal('');
 
+  // Shows a skeleton in place of the dashboard briefly on first load,
+  // Instagram-style, instead of an instant flash of content.
+  pageReady = signal(false);
+
   newType: 'income' | 'expense' = 'income';
   newCategory = '';
   newAmount: number | null = null;
   newDate = this.toIsoDate(new Date());
+
+
+  // =====================================================
+  // TRANSACTION FILE ATTACHMENTS (upload / download)
+  // =====================================================
+  //
+  // Only one attachment can be uploading at a time, tracked
+  // by which transaction it belongs to.
+
+  uploadingTransactionId = signal<number | null>(null);
+  uploadProgress = signal(0);
+  filesError = signal('');
 
 
   // =====================================================
@@ -180,7 +224,8 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private financeService: FinanceService
+    private financeService: FinanceService,
+    public themeService: ThemeService
   ) {}
 
 
@@ -209,6 +254,8 @@ export class DashboardComponent implements OnInit {
       '';
 
     this.loadYears();
+
+    setTimeout(() => this.pageReady.set(true), 700);
   }
 
 
@@ -345,17 +392,87 @@ export class DashboardComponent implements OnInit {
   }
 
 
-  openDashboard(event: Event): void {
+  // =====================================================
+  // SECTION NAVIGATION (sidebar directory)
+  // =====================================================
 
-    event.preventDefault();
+  selectSection(
+    section: DashboardSection
+  ): void {
+
+    this.activeSection = section;
 
     if (window.matchMedia('(max-width: 900px)').matches) {
-      this.mobileSidebarOpen = !this.mobileSidebarOpen;
-    } else {
-      this.sidebarCollapsed = !this.sidebarCollapsed;
+      this.mobileSidebarOpen = false;
     }
 
-    this.router.navigate(['/dashboard']);
+  }
+
+
+  selectSummaryTab(
+    tab: SummaryTab
+  ): void {
+
+    this.summaryTab = tab;
+
+  }
+
+
+  onDashboardIconClick(): void {
+
+    if (window.matchMedia('(max-width: 900px)').matches) {
+
+      // On mobile, the collapsed rail shows only this icon, so it
+      // doubles as the menu opener when the drawer is closed.
+      if (!this.mobileSidebarOpen) {
+        this.mobileSidebarOpen = true;
+        return;
+      }
+
+      this.selectSection('home');
+      return;
+    }
+
+    // Desktop: mirror the same open/close toggle — a collapsed rail
+    // expands, an expanded sidebar navigates home and collapses back.
+    if (this.sidebarCollapsed) {
+      this.sidebarCollapsed = false;
+      return;
+    }
+
+    this.activeSection = 'home';
+    this.sidebarCollapsed = true;
+
+  }
+
+
+  toggleOverviewMenu(event: Event): void {
+
+    event.stopPropagation();
+
+    this.overviewMenuOpen = !this.overviewMenuOpen;
+
+  }
+
+
+  selectOverviewSection(): void {
+
+    // Deliberately not calling selectSection() here: on mobile that
+    // would auto-close the drawer, but the user's intent when tapping
+    // this row is to browse the chart submenu it's about to reveal —
+    // same as tapping the chevron directly, which stays open.
+    this.activeSection = 'overview';
+    this.overviewMenuOpen = true;
+
+  }
+
+
+  selectChartFromSidebar(
+    type: DashboardChartType
+  ): void {
+
+    this.selectChart(type);
+    this.selectSection('overview');
 
   }
 
@@ -480,6 +597,7 @@ export class DashboardComponent implements OnInit {
     date: string;
     type: 'Income' | 'Expense';
     amount: number;
+    files: UploadedFileInfo[];
   }[] {
 
     return this.transactions().map(transaction => ({
@@ -496,9 +614,32 @@ export class DashboardComponent implements OnInit {
 
       amount: transaction.type === 'income'
         ? transaction.amount
-        : -transaction.amount
+        : -transaction.amount,
+
+      files: transaction.files
 
     }));
+
+  }
+
+
+  // =====================================================
+  // ALL ATTACHED FILES (flattened, for the Files screen)
+  // =====================================================
+
+  get allAttachedFiles(): {
+    file: UploadedFileInfo;
+    transactionName: string;
+    transactionDate: string;
+  }[] {
+
+    return this.currentTransactions.flatMap(transaction =>
+      transaction.files.map(file => ({
+        file,
+        transactionName: transaction.name,
+        transactionDate: transaction.date
+      }))
+    );
 
   }
 
@@ -579,16 +720,20 @@ export class DashboardComponent implements OnInit {
 
 
   // =====================================================
-  // CHANGE YEAR
+  // YEAR MENU
   // =====================================================
 
-  changeYear(event: Event): void {
+  toggleYearMenu(): void {
 
-    const select =
-      event.target as HTMLSelectElement;
+    this.yearMenuOpen.update(open => !open);
 
-    this.selectedYear =
-      Number(select.value);
+  }
+
+
+  selectYear(year: number): void {
+
+    this.selectedYear = year;
+    this.yearMenuOpen.set(false);
 
     this.loadTransactions();
 
@@ -696,6 +841,8 @@ export class DashboardComponent implements OnInit {
 
   get chartData(): ChartConfiguration['data'] {
 
+    const isLight = this.themeService.isLight();
+
     if (this.selectedChart === 'pie') {
 
       return {
@@ -720,7 +867,7 @@ export class DashboardComponent implements OnInit {
               '#ef4444'
             ],
 
-            borderColor: '#0d1420',
+            borderColor: isLight ? '#ffffff' : '#0d1420',
 
             borderWidth: 3,
 
@@ -890,7 +1037,7 @@ export class DashboardComponent implements OnInit {
 
           pointBackgroundColor: '#818cf8',
 
-          pointBorderColor: '#ffffff',
+          pointBorderColor: isLight ? '#0d1420' : '#ffffff',
 
           pointBorderWidth: 2,
 
@@ -944,7 +1091,7 @@ export class DashboardComponent implements OnInit {
 
           pointBackgroundColor: '#f87171',
 
-          pointBorderColor: '#ffffff',
+          pointBorderColor: isLight ? '#0d1420' : '#ffffff',
 
           pointBorderWidth: 2,
 
@@ -971,6 +1118,15 @@ export class DashboardComponent implements OnInit {
 
   get chartOptions(): ChartConfiguration['options'] {
 
+    const isLight = this.themeService.isLight();
+
+    const tickColor = isLight ? '#4b5563' : '#a7b0c0';
+    const gridColor = isLight ? 'rgba(15,23,42,0.08)' : 'rgba(255,255,255,0.055)';
+    const tooltipBg = isLight ? '#ffffff' : '#111827';
+    const tooltipTitle = isLight ? '#111827' : '#ffffff';
+    const tooltipBody = isLight ? '#374151' : '#cbd5e1';
+    const tooltipBorder = isLight ? '#e5e7eb' : '#293548';
+
     if (this.selectedChart === 'pie') {
 
       return {
@@ -987,7 +1143,7 @@ export class DashboardComponent implements OnInit {
 
             labels: {
 
-              color: '#a7b0c0',
+              color: tickColor,
 
               usePointStyle: true,
 
@@ -1005,13 +1161,13 @@ export class DashboardComponent implements OnInit {
 
           tooltip: {
 
-            backgroundColor: '#111827',
+            backgroundColor: tooltipBg,
 
-            titleColor: '#ffffff',
+            titleColor: tooltipTitle,
 
-            bodyColor: '#cbd5e1',
+            bodyColor: tooltipBody,
 
-            borderColor: '#293548',
+            borderColor: tooltipBorder,
 
             borderWidth: 1,
 
@@ -1069,7 +1225,7 @@ export class DashboardComponent implements OnInit {
 
           labels: {
 
-            color: '#a7b0c0',
+            color: tickColor,
 
             usePointStyle: true,
 
@@ -1087,13 +1243,13 @@ export class DashboardComponent implements OnInit {
 
         tooltip: {
 
-          backgroundColor: '#111827',
+          backgroundColor: tooltipBg,
 
-          titleColor: '#ffffff',
+          titleColor: tooltipTitle,
 
-          bodyColor: '#cbd5e1',
+          bodyColor: tooltipBody,
 
-          borderColor: '#293548',
+          borderColor: tooltipBorder,
 
           borderWidth: 1,
 
@@ -1137,7 +1293,7 @@ export class DashboardComponent implements OnInit {
 
           ticks: {
 
-            color: '#7c8799',
+            color: tickColor,
 
             maxRotation: 0,
 
@@ -1151,8 +1307,7 @@ export class DashboardComponent implements OnInit {
 
           grid: {
 
-            color:
-              'rgba(255,255,255,0.055)'
+            color: gridColor
 
           }
 
@@ -1164,7 +1319,7 @@ export class DashboardComponent implements OnInit {
 
           ticks: {
 
-            color: '#7c8799',
+            color: tickColor,
 
             font: {
               size: 10
@@ -1187,8 +1342,7 @@ export class DashboardComponent implements OnInit {
 
           grid: {
 
-            color:
-              'rgba(255,255,255,0.055)'
+            color: gridColor
 
           }
 
@@ -1213,6 +1367,174 @@ export class DashboardComponent implements OnInit {
 
 
   // =====================================================
+  // FILE SELECTED FOR UPLOAD (Files screen)
+  // =====================================================
+
+  onFileSelectedForUpload(event: Event): void {
+
+    const input =
+      event.target as HTMLInputElement;
+
+    const file =
+      input.files?.[0];
+
+    input.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    // Transactions come back from the API newest-first, so the first
+    // entry is the most recent one.
+    const mostRecentTransactionId =
+      this.transactions()[0]?.id;
+
+    if (mostRecentTransactionId === undefined) {
+      this.filesError.set('Please add a transaction first.');
+      return;
+    }
+
+    this.uploadAttachment(mostRecentTransactionId, file);
+  }
+
+
+  // =====================================================
+  // UPLOAD A FILE FOR A TRANSACTION (tracks progress for
+  // the progress bar)
+  // =====================================================
+
+  private uploadAttachment(transactionId: number, file: File): void {
+
+    this.uploadingTransactionId.set(transactionId);
+    this.uploadProgress.set(0);
+    this.filesError.set('');
+
+    this.financeService.uploadTransactionFile(transactionId, file).subscribe({
+
+      next: (event) => {
+
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+
+          this.uploadProgress.set(
+            Math.round((event.loaded / event.total) * 100)
+          );
+
+        } else if (event.type === HttpEventType.Response) {
+
+          // The upload-progress event can complete a beat before the
+          // server actually responds, so briefly hold the bar at 100%
+          // instead of jumping straight from ~99% to gone.
+          this.uploadProgress.set(100);
+
+          const uploaded =
+            event.body as UploadedFileInfo;
+
+          this.transactions.update(list =>
+            list.map(transaction =>
+              transaction.id === transactionId
+                ? { ...transaction, files: [uploaded, ...transaction.files] }
+                : transaction
+            )
+          );
+
+          setTimeout(() => {
+            this.uploadingTransactionId.set(null);
+            this.uploadProgress.set(0);
+          }, 600);
+        }
+
+      },
+
+      error: (error) => {
+
+        this.uploadingTransactionId.set(null);
+        this.uploadProgress.set(0);
+
+        if (error.status === 401) {
+          this.logout();
+          return;
+        }
+
+        this.filesError.set(
+          'Could not upload the file.'
+        );
+      }
+
+    });
+  }
+
+
+  // =====================================================
+  // DOWNLOAD FILE
+  // =====================================================
+
+  downloadFile(file: UploadedFileInfo): void {
+
+    this.financeService.downloadFile(file.id).subscribe({
+
+      next: (blob) => {
+
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = file.fileName;
+        link.click();
+
+        URL.revokeObjectURL(url);
+      },
+
+      error: (error) => {
+
+        if (error.status === 401) {
+          this.logout();
+          return;
+        }
+
+        this.filesError.set(
+          'Could not download the file.'
+        );
+      }
+
+    });
+  }
+
+
+  // =====================================================
+  // FILE SIZE DISPLAY
+  // =====================================================
+
+  formatFileSize(bytes: number): string {
+
+    if (bytes < 1024) {
+      return `${bytes} B`;
+    }
+
+    if (bytes < 1024 * 1024) {
+      return `${(bytes / 1024).toFixed(1)} KB`;
+    }
+
+    if (bytes < 1024 * 1024 * 1024) {
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+
+  }
+
+
+  formatUploadedDate(isoDate: string): string {
+
+    return new Date(isoDate).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+
+  }
+
+
+  // =====================================================
   // LOGOUT
   // =====================================================
 
@@ -1221,6 +1543,7 @@ export class DashboardComponent implements OnInit {
     this.showProfile = false;
     this.sidebarCollapsed = false;
     this.mobileSidebarOpen = false;
+    this.activeSection = 'home';
 
     localStorage.removeItem('loggedIn');
     localStorage.removeItem('username');

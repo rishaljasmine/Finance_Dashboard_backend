@@ -1,6 +1,19 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
+
+// =====================================================
+// UPLOADED FILE
+// =====================================================
+
+export interface UploadedFileInfo {
+  id: number;
+  fileName: string;
+  contentType: string;
+  sizeBytes: number;
+  uploadedAt: string;
+}
 
 
 // =====================================================
@@ -13,6 +26,7 @@ export interface Transaction {
   category: string;
   amount: number;
   date: string;
+  files: UploadedFileInfo[];
 }
 
 
@@ -76,7 +90,7 @@ export class FinanceService {
   // ===================================================
 
   private readonly baseUrl =
-    'http://127.0.0.1:8000/api';
+    'http://127.0.0.1:8001/api';
 
 
   private readonly transactionsUrl =
@@ -97,6 +111,10 @@ export class FinanceService {
 
   private readonly googleLoginUrl =
     `${this.baseUrl}/auth/google`;
+
+
+  private readonly filesUrl =
+    `${this.baseUrl}/files`;
 
 
   constructor(
@@ -203,6 +221,51 @@ export class FinanceService {
     return this.http.post<AuthUser>(
       this.googleLoginUrl,
       { credential }
+    );
+  }
+
+
+  // ===================================================
+  // UPLOAD A FILE FOR A TRANSACTION (reports progress
+  // events so the caller can drive a progress bar)
+  // ===================================================
+
+  uploadTransactionFile(
+    transactionId: number,
+    file: File
+  ): Observable<HttpEvent<UploadedFileInfo>> {
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const request = new HttpRequest(
+      'POST',
+      `${this.transactionsUrl}/${transactionId}/files`,
+      formData,
+      {
+        headers: this.authHeaders(),
+        reportProgress: true
+      }
+    );
+
+    return this.http.request<UploadedFileInfo>(request);
+  }
+
+
+  // ===================================================
+  // DOWNLOAD FILE
+  // ===================================================
+
+  downloadFile(
+    id: number
+  ): Observable<Blob> {
+
+    return this.http.get(
+      `${this.filesUrl}/${id}/download`,
+      {
+        headers: this.authHeaders(),
+        responseType: 'blob'
+      }
     );
   }
 

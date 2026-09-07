@@ -1,23 +1,80 @@
-<div class="dashboard min-h-screen text-[#e5e7eb] bg-[#080b12] max-[900px]:block">
+<div class="dashboard min-h-screen text-[#e5e7eb] bg-[#080b12] light:text-[#1f2430] light:bg-[#f4f6fa] max-[900px]:block">
+
+  <!-- =====================================================
+       SKELETON (Instagram-style placeholder before the real
+       dashboard appears)
+  ===================================================== -->
+
+  <div class="dashboard flex" *ngIf="!pageReady()">
+
+    <!-- sidebar skeleton -->
+    <div class="dashboard hidden min-[901px]:flex flex-col w-[245px] shrink-0 min-h-screen px-[20px] py-[28px] border-r border-[#1b2635] light:border-[#e5e7eb] animate-pulse">
+      <div class="dashboard flex items-center gap-[12px] mb-[42px]">
+        <div class="dashboard w-[38px] h-[38px] rounded-[11px] bg-[#171b2a] light:bg-[#e5e7eb] shrink-0"></div>
+        <div class="dashboard w-[100px] h-[14px] rounded-[4px] bg-[#171b2a] light:bg-[#e5e7eb]"></div>
+      </div>
+      <div class="dashboard h-[40px] rounded-[9px] bg-[#171b2a] light:bg-[#e5e7eb] mb-[10px]"></div>
+      <div class="dashboard h-[34px] rounded-[8px] bg-[#171b2a] light:bg-[#e5e7eb] mb-[8px] ml-[10px]"></div>
+      <div class="dashboard h-[34px] rounded-[8px] bg-[#171b2a] light:bg-[#e5e7eb] mb-[8px] ml-[10px]"></div>
+      <div class="dashboard h-[34px] rounded-[8px] bg-[#171b2a] light:bg-[#e5e7eb] ml-[10px]"></div>
+    </div>
+
+    <!-- main content skeleton -->
+    <div class="dashboard flex-1 min-w-0 animate-pulse" style="padding: 28px 30px 35px;">
+
+      <div class="dashboard flex items-start justify-between gap-[24px] mb-[28px]">
+        <div class="dashboard">
+          <div class="dashboard w-[90px] h-[12px] rounded-[4px] bg-[#171b2a] light:bg-[#e5e7eb] mb-[10px]"></div>
+          <div class="dashboard w-[160px] h-[26px] rounded-[6px] bg-[#171b2a] light:bg-[#e5e7eb]"></div>
+        </div>
+        <div class="dashboard flex items-center gap-[14px]">
+          <div class="dashboard w-[42px] h-[42px] rounded-[9px] bg-[#171b2a] light:bg-[#e5e7eb]"></div>
+          <div class="dashboard w-[122px] h-[42px] rounded-[9px] bg-[#171b2a] light:bg-[#e5e7eb]"></div>
+          <div class="dashboard w-[42px] h-[42px] rounded-full bg-[#171b2a] light:bg-[#e5e7eb]"></div>
+        </div>
+      </div>
+
+      <div class="dashboard grid gap-[16px] mb-[20px] [grid-template-columns:repeat(4,minmax(0,1fr))] max-[1150px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-[900px]:[grid-template-columns:1fr]">
+        <div class="dashboard h-[137px] rounded-[14px] bg-[#101722] light:bg-[#fafbfe] border border-[#202c3d] light:border-[#e5e7eb]"></div>
+        <div class="dashboard h-[137px] rounded-[14px] bg-[#101722] light:bg-[#fafbfe] border border-[#202c3d] light:border-[#e5e7eb]"></div>
+        <div class="dashboard h-[137px] rounded-[14px] bg-[#101722] light:bg-[#fafbfe] border border-[#202c3d] light:border-[#e5e7eb]"></div>
+        <div class="dashboard h-[137px] rounded-[14px] bg-[#101722] light:bg-[#fafbfe] border border-[#202c3d] light:border-[#e5e7eb]"></div>
+      </div>
+
+      <div class="dashboard h-[380px] rounded-[14px] bg-[#101722] light:bg-[#fafbfe] border border-[#202c3d] light:border-[#e5e7eb] mb-[20px]"></div>
+
+      <div class="dashboard grid gap-[20px] [grid-template-columns:1.1fr_0.9fr] max-[900px]:[grid-template-columns:1fr]">
+        <div class="dashboard h-[280px] rounded-[14px] bg-[#101722] light:bg-[#fafbfe] border border-[#202c3d] light:border-[#e5e7eb]"></div>
+        <div class="dashboard h-[280px] rounded-[14px] bg-[#101722] light:bg-[#fafbfe] border border-[#202c3d] light:border-[#e5e7eb]"></div>
+      </div>
+
+    </div>
+
+  </div>
+
 
   <!-- =====================================================
        SIDEBAR
   ===================================================== -->
 
+  <ng-container *ngIf="pageReady()">
+
   <aside
-    class="dashboard fixed left-0 top-0 bottom-0 flex flex-col border-r border-[#1b2635] z-[1000] [background:linear-gradient(180deg,#090f19,#080d15)] transition-[width,transform] duration-[280ms] ease-in-out"
+    class="dashboard fixed left-0 top-0 bottom-0 flex flex-col border-r border-[#1b2635] light:border-[#e5e7eb] z-[1000] [background:linear-gradient(180deg,#090f19,#080d15)] light:[background:#fafbfe] transition-[width,transform] duration-[280ms] ease-in-out"
     [class]="
-      (sidebarCollapsed ? 'w-[82px] pl-[10px] pr-[10px] py-[28px]' : 'w-[245px] px-[20px] py-[28px]') + ' ' +
+      (sidebarCollapsed
+        ? 'min-[901px]:w-[82px] min-[901px]:pl-[10px] min-[901px]:pr-[10px] min-[901px]:py-[28px]'
+        : 'min-[901px]:w-[245px] min-[901px]:px-[20px] min-[901px]:py-[28px]') + ' ' +
       (mobileSidebarOpen
-        ? 'max-[900px]:w-[260px] max-[900px]:pl-[18px] max-[900px]:pr-[18px] max-[900px]:py-[22px]'
+        ? 'max-[900px]:w-[260px] max-[900px]:pl-[18px] max-[900px]:pr-[18px] max-[900px]:py-[22px] max-[900px]:shadow-[15px_0_45px_rgba(0,0,0,.45)]'
         : 'max-[900px]:w-[82px] max-[900px]:px-[10px] max-[900px]:py-[22px]') +
-      ' max-[900px]:translate-x-0 max-[900px]:shadow-[15px_0_45px_rgba(0,0,0,.45)]'
+      ' max-[900px]:translate-x-0'
     "
   >
 
     <!-- SIDEBAR CONTENT -->
 
-    <div class="dashboard w-full transition-all duration-[250ms]">
+    <div class="dashboard w-full h-full flex flex-col transition-all duration-[250ms]">
 
       <!-- LOGO -->
 
@@ -28,7 +85,7 @@
 
         <button
           type="button"
-          class="dashboard w-[38px] h-[38px] grid place-items-center shrink-0 text-[#8b5cf6] bg-[#17152b] border border-[#38305e] rounded-[11px] cursor-pointer"
+          class="dashboard w-[38px] h-[38px] grid place-items-center shrink-0 text-[#8b5cf6] bg-[#17152b] border border-[#38305e] rounded-[11px] cursor-pointer light:text-[#7c3aed] light:bg-[#f3f0ff] light:border-[#ddd6fe]"
           style="font: inherit;"
           (click)="toggleSidebar()"
           aria-label="Toggle sidebar"
@@ -73,9 +130,9 @@
           [class]="(sidebarCollapsed ? 'hidden' : '') + ' ' + (!mobileSidebarOpen ? 'max-[900px]:hidden' : '')"
         >
 
-          <h2 class="dashboard text-[#f8fafc] text-[19px] leading-[1.1] block m-0">Finova</h2>
+          <h2 class="dashboard text-[#f8fafc] text-[19px] leading-[1.1] block m-0 light:text-[#111827]">Finova</h2>
 
-          <span class="dashboard block m-0 mt-[4px] text-[#7f8ba0] text-[10px]">
+          <span class="dashboard block m-0 mt-[4px] text-[#7f8ba0] text-[10px] light:text-[#6b7280]">
             Finance Dashboard
           </span>
 
@@ -84,30 +141,192 @@
       </div>
 
 
+      <!-- DASHBOARD LINK (kept outside the scrollable nav below so its
+           collapsed-state tooltip isn't clipped by that container's
+           overflow-x-hidden) -->
+
+      <a
+        class="dashboard relative group flex items-center gap-[12px] w-full min-h-[44px] px-[15px] py-0 border-0 rounded-[9px] no-underline cursor-pointer mb-[8px] shrink-0"
+        style="font: inherit; transition: background 0.2s, color 0.2s;"
+        [class]="
+          (activeSection === 'home'
+            ? 'text-[#f8fafc] bg-[#171b2a] shadow-[inset_3px_0_#8b5cf6] light:text-[#111827] light:bg-[#eef2ff] light:border light:border-[#4338ca]'
+            : 'text-[#8f9bad] bg-transparent light:text-[#64748b]') + ' ' +
+          (sidebarCollapsed ? 'justify-center pl-0 pr-0' : '')
+        "
+        href="/dashboard"
+        (click)="$event.preventDefault(); onDashboardIconClick()"
+      >
+
+        <span class="dashboard w-[18px] shrink-0 grid place-items-center text-[#a78bfa] light:text-[#7c3aed]">
+          <svg
+            class="dashboard w-[18px] h-[18px]"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              d="M3.5 11.5 12 4l8.5 7.5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M5.5 10v8.5a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V10"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </span>
+
+        <span
+          class="dashboard"
+          [class]="(sidebarCollapsed ? 'hidden' : '') + ' ' + (!mobileSidebarOpen ? 'max-[900px]:hidden' : '')"
+        >
+          Dashboard
+        </span>
+
+        <span
+          class="dashboard pointer-events-none absolute left-full ml-[12px] top-1/2 -translate-y-1/2 whitespace-nowrap px-[10px] py-[6px] rounded-[7px] text-[12px] font-semibold text-white bg-[#1c2432] border border-[#2a3648] shadow-[0_8px_20px_rgba(0,0,0,.35)] opacity-0 scale-95 transition-[opacity,transform] duration-150 z-[1100] group-hover:opacity-100 group-hover:scale-100 light:bg-[#111827] light:border-[#1f2937]"
+          *ngIf="sidebarCollapsed"
+        >
+          Dashboard
+        </span>
+
+      </a>
+
+
       <!-- NAVIGATION -->
 
-      <nav class="dashboard grid gap-[8px]">
+      <nav
+        class="dashboard grid content-start gap-[8px] flex-1 min-h-0 overflow-y-auto overflow-x-hidden"
+        style="-webkit-overflow-scrolling: touch; scrollbar-width: thin;"
+      >
 
-        <a
-          class="dashboard flex items-center gap-[12px] w-full min-h-[44px] px-[15px] py-0 border-0 rounded-[9px] no-underline cursor-pointer text-[#f8fafc] bg-[#171b2a] shadow-[inset_3px_0_#8b5cf6]"
-          style="font: inherit; transition: background 0.2s, color 0.2s;"
-          [class]="sidebarCollapsed ? 'justify-center pl-0 pr-0' : ''"
-          href="/dashboard"
-          (click)="openDashboard($event)"
+        <!-- SUB-DIRECTORY (hidden when sidebar collapsed) -->
+
+        <div
+          class="dashboard grid content-start gap-[4px] pl-[10px]"
+          [class]="(sidebarCollapsed ? 'hidden' : '') + ' ' + (!mobileSidebarOpen ? 'max-[900px]:hidden' : '')"
         >
 
-          <span class="dashboard w-[18px] text-center text-[#a78bfa] text-[19px]">
-            ⌂
-          </span>
+          <!-- FINANCIAL OVERVIEW (expandable) -->
 
-          <span
-            class="dashboard"
-            [class]="(sidebarCollapsed ? 'hidden' : '') + ' ' + (!mobileSidebarOpen ? 'max-[900px]:hidden' : '')"
+          <button
+            type="button"
+            class="dashboard flex items-center justify-between w-full min-h-[38px] px-[12px] py-0 border-0 rounded-[8px] cursor-pointer text-[13px]"
+            style="font: inherit; transition: background 0.2s, color 0.2s;"
+            [class]="activeSection === 'overview' ? 'text-[#f8fafc] bg-[#171b2a] light:text-[#111827] light:bg-[#eef2ff] light:border light:border-[#4338ca]' : 'text-[#8390a3] bg-transparent light:text-[#6b7280]'"
+            (click)="selectOverviewSection()"
           >
-            Dashboard
-          </span>
 
-        </a>
+            <span class="dashboard flex items-center gap-[10px]">
+              <span class="dashboard text-[15px]">▥</span>
+              Financial Overview
+            </span>
+
+            <span
+              class="dashboard text-[10px] transition-transform duration-200"
+              [class]="overviewMenuOpen ? '[transform:rotate(90deg)]' : ''"
+              (click)="toggleOverviewMenu($event)"
+            >
+              ▸
+            </span>
+
+          </button>
+
+          <div
+            class="dashboard grid gap-[2px] pl-[20px] overflow-hidden"
+            *ngIf="overviewMenuOpen"
+          >
+
+            <a
+              *ngFor="let chart of chartTypes"
+              class="dashboard flex items-center gap-[8px] min-h-[32px] px-[10px] py-0 rounded-[7px] cursor-pointer text-[12px] no-underline"
+              style="transition: background 0.2s, color 0.2s;"
+              [class]="(activeSection === 'overview' && selectedChart === chart.type) ? 'text-[#c4b5fd] bg-[#1c1740] light:text-[#4338ca] light:bg-[#eef2ff] light:border light:border-[#4338ca]' : 'text-[#75808f] bg-transparent light:text-[#94a3b8]'"
+              (click)="selectChartFromSidebar(chart.type)"
+            >
+              <span>{{ chart.icon }}</span>
+              {{ chart.name }}
+            </a>
+
+          </div>
+
+
+          <!-- RECENT TRANSACTIONS -->
+
+          <a
+            class="dashboard flex items-center gap-[10px] w-full min-h-[38px] px-[12px] py-0 rounded-[8px] cursor-pointer text-[13px] no-underline"
+            style="font: inherit; transition: background 0.2s, color 0.2s;"
+            [class]="activeSection === 'transactions' ? 'text-[#f8fafc] bg-[#171b2a] light:text-[#111827] light:bg-[#eef2ff] light:border light:border-[#4338ca]' : 'text-[#8390a3] bg-transparent light:text-[#6b7280]'"
+            (click)="selectSection('transactions')"
+          >
+            <span class="dashboard text-[15px]">↗</span>
+            Recent Transactions
+          </a>
+
+
+          <!-- EXPENSES BY CATEGORY -->
+
+          <a
+            class="dashboard flex items-center gap-[10px] w-full min-h-[38px] px-[12px] py-0 rounded-[8px] cursor-pointer text-[13px] no-underline"
+            style="font: inherit; transition: background 0.2s, color 0.2s;"
+            [class]="activeSection === 'expenses' ? 'text-[#f8fafc] bg-[#171b2a] light:text-[#111827] light:bg-[#eef2ff] light:border light:border-[#4338ca]' : 'text-[#8390a3] bg-transparent light:text-[#6b7280]'"
+            (click)="selectSection('expenses')"
+          >
+            <span class="dashboard text-[15px]">◉</span>
+            Expenses by Category
+          </a>
+
+
+          <!-- SUMMARY (tabbed overview) -->
+
+          <a
+            class="dashboard flex items-center gap-[10px] w-full min-h-[38px] px-[12px] py-0 rounded-[8px] cursor-pointer text-[13px] no-underline"
+            style="font: inherit; transition: background 0.2s, color 0.2s;"
+            [class]="activeSection === 'summary' ? 'text-[#f8fafc] bg-[#171b2a] light:text-[#111827] light:bg-[#eef2ff] light:border light:border-[#4338ca]' : 'text-[#8390a3] bg-transparent light:text-[#6b7280]'"
+            (click)="selectSection('summary')"
+          >
+            <span class="dashboard text-[15px]">☰</span>
+            Summary
+          </a>
+
+
+          <!-- FILES -->
+
+          <a
+            class="dashboard flex items-center gap-[10px] w-full min-h-[38px] px-[12px] py-0 rounded-[8px] cursor-pointer text-[13px] no-underline"
+            style="font: inherit; transition: background 0.2s, color 0.2s;"
+            [class]="activeSection === 'files' ? 'text-[#f8fafc] bg-[#171b2a] light:text-[#111827] light:bg-[#eef2ff] light:border light:border-[#4338ca]' : 'text-[#8390a3] bg-transparent light:text-[#6b7280]'"
+            (click)="selectSection('files')"
+          >
+            <span class="dashboard w-[15px] shrink-0 grid place-items-center">
+              <svg class="dashboard w-[15px] h-[15px]" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M6.5 3.5h7l5 5v11a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1Z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M13.5 3.5v4a1 1 0 0 0 1 1h4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            Files
+          </a>
+
+        </div>
 
       </nav>
 
@@ -136,8 +355,8 @@
     style="padding: 28px 30px 35px; transition: width 0.28s ease, margin-left 0.28s ease;"
     [class]="
       (sidebarCollapsed
-        ? '[width:calc(100%-82px)] ml-[82px]'
-        : '[width:calc(100%-245px)] ml-[245px]') + ' ' +
+        ? 'min-[901px]:[width:calc(100%-82px)] min-[901px]:ml-[82px]'
+        : 'min-[901px]:[width:calc(100%-245px)] min-[901px]:ml-[245px]') + ' ' +
       (mobileSidebarOpen
         ? 'max-[900px]:w-full max-[900px]:ml-0'
         : 'max-[900px]:[width:calc(100%-82px)] max-[900px]:ml-[82px]')
@@ -153,15 +372,15 @@
 
       <div class="dashboard max-[900px]:flex-1">
 
-        <span class="dashboard text-[#7f8ba0] block mb-[5px] text-[13px]">
+        <span class="dashboard text-[#7f8ba0] block mb-[5px] text-[13px] light:text-[#6b7280]">
           Welcome back,
         </span>
 
-        <h1 class="dashboard m-0 text-[#f8fafc] text-[29px] leading-[1.15] max-[900px]:max-w-full max-[900px]:text-[22px] max-[400px]:text-[20px]">
+        <h1 class="dashboard m-0 text-[#f8fafc] text-[29px] leading-[1.15] light:text-[#111827] max-[900px]:max-w-full max-[900px]:text-[22px] max-[400px]:text-[20px]">
           {{ username }}
         </h1>
 
-        <p class="dashboard text-[#7f8ba0] mt-[7px] mb-0 mx-0 text-[12px] max-[900px]:text-[11px] max-[400px]:hidden">
+        <p class="dashboard text-[#7f8ba0] mt-[7px] mb-0 mx-0 text-[12px] light:text-[#6b7280] max-[900px]:text-[11px] max-[400px]:hidden">
           Here's your financial overview
         </p>
 
@@ -171,32 +390,85 @@
       <div class="dashboard flex items-center gap-[14px] max-[900px]:w-auto max-[900px]:gap-[8px]">
 
 
+        <!-- THEME TOGGLE -->
+
+        <button
+          type="button"
+          class="dashboard relative group flex items-center justify-center w-[42px] h-[42px] border border-[#253044] rounded-[9px] cursor-pointer text-[#aab4c4] bg-[#101722] text-[16px] light:text-[#7c3aed] light:bg-white light:border-[#e5e7eb] max-[400px]:w-[42px] max-[400px]:h-[42px]"
+          (click)="themeService.toggle()"
+          aria-label="Toggle day/night mode"
+        >
+          {{ themeService.isLight() ? '☀' : '☾' }}
+
+          <span class="dashboard pointer-events-none absolute right-0 top-full mt-[8px] whitespace-nowrap px-[10px] py-[6px] rounded-[7px] text-[12px] font-semibold text-white bg-[#1c2432] border border-[#2a3648] shadow-[0_8px_20px_rgba(0,0,0,.35)] opacity-0 scale-95 transition-[opacity,transform] duration-150 z-[1100] group-hover:opacity-100 group-hover:scale-100 light:bg-[#111827] light:border-[#1f2937]">
+            {{ themeService.isLight() ? 'Switch to dark mode' : 'Switch to light mode' }}
+          </span>
+        </button>
+
+
         <!-- YEAR SELECTOR -->
 
-        <div class="dashboard flex items-center gap-[8px] min-w-[122px] h-[42px] px-[12px] py-0 text-[#aab4c4] bg-[#101722] border border-[#253044] rounded-[9px] max-[900px]:min-w-[105px] max-[900px]:h-[43px] max-[400px]:min-w-[90px] max-[400px]:h-[42px] max-[400px]:px-[8px]">
+        <div class="dashboard relative">
 
-          <span class="dashboard text-[#8b5cf6] max-[400px]:hidden">
-            ▣
-          </span>
-
-          <select
-            class="dashboard flex-1 min-w-0 text-[#dbe3ef] bg-transparent border-0 outline-0"
+          <button
+            type="button"
+            class="dashboard relative group flex items-center gap-[8px] min-w-[122px] h-[42px] px-[12px] py-0 text-[#aab4c4] bg-[#101722] border border-[#253044] rounded-[9px] cursor-pointer light:text-[#374151] light:bg-white light:border-[#e5e7eb] max-[900px]:min-w-[105px] max-[900px]:h-[43px] max-[400px]:min-w-[90px] max-[400px]:h-[42px] max-[400px]:px-[8px]"
             style="font: inherit;"
-            [value]="selectedYear"
-            (change)="changeYear($event)"
+            (click)="toggleYearMenu()"
           >
 
-            <option
-              class="dashboard text-[#111827] bg-white"
+            <span class="dashboard text-[#8b5cf6] light:text-[#7c3aed] max-[400px]:hidden">
+              ▣
+            </span>
+
+            <span class="dashboard flex-1 min-w-0 text-left text-[#dbe3ef] light:text-[#111827]">
+              {{ selectedYear }}
+            </span>
+
+            <span
+              class="dashboard text-[9px] transition-transform duration-200"
+              [class]="yearMenuOpen() ? '[transform:rotate(180deg)]' : ''"
+            >
+              ▾
+            </span>
+
+            <span
+              class="dashboard pointer-events-none absolute right-0 top-full mt-[8px] whitespace-nowrap px-[10px] py-[6px] rounded-[7px] text-[12px] font-semibold text-white bg-[#1c2432] border border-[#2a3648] shadow-[0_8px_20px_rgba(0,0,0,.35)] opacity-0 scale-95 transition-[opacity,transform] duration-150 z-[1100] group-hover:opacity-100 group-hover:scale-100 light:bg-[#111827] light:border-[#1f2937]"
+              *ngIf="!yearMenuOpen()"
+            >
+              Select year
+            </span>
+
+          </button>
+
+          <div
+            class="dashboard absolute right-0 top-[48px] z-[1200] min-w-[110px] py-[6px] bg-[#111925] border border-[#29364a] rounded-[10px] shadow-[0_18px_45px_rgba(0,0,0,.4)] light:bg-[#fafbfe] light:border-[#e5e7eb] light:shadow-[0_18px_45px_rgba(15,23,42,.12)]"
+            *ngIf="yearMenuOpen()"
+          >
+
+            <button
               *ngFor="let year of years()"
-              [value]="year"
+              type="button"
+              class="dashboard block w-full text-left border-0 bg-transparent cursor-pointer text-[13px]"
+              style="font: inherit; padding: 8px 14px;"
+              [class]="year === selectedYear ? 'text-[#818cf8] font-semibold light:text-[#4338ca]' : 'text-[#c7cedb] hover:bg-[#171d2b] light:text-[#374151] light:hover:bg-[#f3f4f6]'"
+              (click)="selectYear(year)"
             >
               {{ year }}
-            </option>
+            </button>
 
-          </select>
+          </div>
 
         </div>
+
+
+        <!-- YEAR MENU BACKDROP (click-outside-to-close) -->
+
+        <div
+          class="dashboard fixed inset-0 z-[1150]"
+          *ngIf="yearMenuOpen()"
+          (click)="yearMenuOpen.set(false)"
+        ></div>
 
 
         <!-- PROFILE -->
@@ -205,14 +477,21 @@
 
           <button
             type="button"
-            class="dashboard relative w-[42px] h-[42px] border border-[#5541a2] rounded-full text-white bg-[#30226c] font-bold cursor-pointer max-[400px]:w-[42px] max-[400px]:h-[42px]"
+            class="dashboard relative group w-[42px] h-[42px] border border-[#5541a2] rounded-full text-white bg-[#30226c] font-bold cursor-pointer max-[400px]:w-[42px] max-[400px]:h-[42px]"
             (click)="toggleProfile()"
             aria-label="Open profile"
           >
 
             {{ profileInitial }}
 
-            <span class="dashboard absolute right-0 bottom-px w-[10px] h-[10px] border-2 border-[#080b12] rounded-full bg-[#22c55e]"></span>
+            <span class="dashboard absolute right-0 bottom-px w-[10px] h-[10px] border-2 border-[#080b12] rounded-full bg-[#22c55e] light:border-[#f4f6fa]"></span>
+
+            <span
+              class="dashboard pointer-events-none absolute right-0 top-full mt-[8px] whitespace-nowrap px-[10px] py-[6px] rounded-[7px] text-[12px] font-semibold text-white bg-[#1c2432] border border-[#2a3648] shadow-[0_8px_20px_rgba(0,0,0,.35)] opacity-0 scale-95 transition-[opacity,transform] duration-150 z-[1100] group-hover:opacity-100 group-hover:scale-100 light:bg-[#111827] light:border-[#1f2937]"
+              *ngIf="!showProfile"
+            >
+              Profile
+            </span>
 
           </button>
 
@@ -220,7 +499,7 @@
           <!-- PROFILE DROPDOWN -->
 
           <div
-            class="dashboard absolute top-[52px] right-0 z-[1200] w-[280px] p-[16px] text-[#dbe3ef] bg-[#111925] border border-[#29364a] rounded-[12px] shadow-[0_18px_45px_rgba(0,0,0,.4)] max-[900px]:[width:min(280px,calc(100vw-24px))]"
+            class="dashboard absolute top-[52px] right-0 z-[1200] w-[280px] p-[16px] text-[#dbe3ef] bg-[#111925] border border-[#29364a] rounded-[12px] shadow-[0_18px_45px_rgba(0,0,0,.4)] light:text-[#111827] light:bg-[#fafbfe] light:border-[#e5e7eb] light:shadow-[0_18px_45px_rgba(15,23,42,.12)] max-[900px]:[width:min(280px,calc(100vw-24px))]"
             *ngIf="showProfile"
           >
 
@@ -236,7 +515,7 @@
                   {{ username }}
                 </strong>
 
-                <span class="dashboard block text-[#8f9bad] text-[11px]">
+                <span class="dashboard block text-[#8f9bad] text-[11px] light:text-[#6b7280]">
                   {{ userEmail || 'No email available' }}
                 </span>
 
@@ -245,12 +524,12 @@
             </div>
 
 
-            <div class="dashboard h-px bg-[#263244]" style="margin: 16px 0;"></div>
+            <div class="dashboard h-px bg-[#263244] light:bg-[#e5e7eb]" style="margin: 16px 0;"></div>
 
 
             <button
               type="button"
-              class="dashboard w-full mt-[15px] border-0 rounded-[7px] text-[#fca5a5] bg-[#2a1820] cursor-pointer"
+              class="dashboard w-full mt-[15px] border-0 rounded-[7px] text-[#fca5a5] bg-[#2a1820] cursor-pointer light:text-[#dc2626] light:bg-[#fee2e2]"
               style="padding: 9px 0;"
               (click)="logout()"
             >
@@ -273,607 +552,918 @@
 
 
     <!-- =====================================================
-         SUMMARY CARDS
+         HOME: full dashboard
     ===================================================== -->
 
-    <section class="dashboard grid gap-[16px] mb-[20px] [grid-template-columns:repeat(4,minmax(0,1fr))] max-[1150px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-[900px]:[grid-template-columns:1fr] max-[900px]:gap-[12px]">
+    <ng-container *ngIf="activeSection === 'home'">
 
 
-      <!-- BALANCE -->
-
-      <div class="dashboard flex items-start justify-between min-h-[137px] p-[20px] bg-[#101722] border border-[#202c3d] rounded-[14px] max-[900px]:min-h-[125px] max-[900px]:p-[17px] max-[400px]:p-[15px]">
-
-        <div class="dashboard">
-
-          <span class="dashboard text-[12px]">
-            Total Balance
-          </span>
-
-          <h2 class="dashboard m-0 text-[#f8fafc] mt-[12px] text-[23px] max-[400px]:text-[19px]">
-            ₹{{ currentNetSavings | number }}
-          </h2>
-
-          <p class="dashboard mt-[7px] mb-0 mx-0 text-[11px] text-[#4ade80]">
-            Current balance
-          </p>
-
-        </div>
-
-        <div class="dashboard grid place-items-center w-[40px] h-[40px] rounded-[10px] text-[20px] text-[#a78bfa] bg-[#211b42]">
-
-          <svg class="dashboard w-[23px] h-[23px]" viewBox="0 0 24 24">
-
-            <path
-              d="M4 7.5A2.5 2.5 0 0 1 6.5 5H19a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 1 4 16.5v-9Z"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-            />
-
-            <circle
-              cx="17"
-              cy="13"
-              r="1.5"
-              fill="currentColor"
-            />
-
-          </svg>
-
-        </div>
-
-      </div>
+      <ng-container *ngTemplateOutlet="summaryCards"></ng-container>
 
 
-      <!-- INCOME -->
+      <ng-container *ngTemplateOutlet="overviewSection"></ng-container>
 
-      <div class="dashboard flex items-start justify-between min-h-[137px] p-[20px] bg-[#101722] border border-[#202c3d] rounded-[14px] max-[900px]:min-h-[125px] max-[900px]:p-[17px] max-[400px]:p-[15px]">
+      <section class="dashboard grid gap-[20px] [grid-template-columns:1.1fr_0.9fr] max-[900px]:[grid-template-columns:1fr] max-[900px]:gap-[14px] min-[651px]:max-[900px]:[grid-template-columns:1fr]">
+        <ng-container *ngTemplateOutlet="transactionsPanel"></ng-container>
+        <ng-container *ngTemplateOutlet="expensePanel"></ng-container>
+      </section>
 
-        <div class="dashboard">
-
-          <span class="dashboard text-[12px]">
-            Total Income
-          </span>
-
-          <h2 class="dashboard m-0 text-[#f8fafc] mt-[12px] text-[23px] max-[400px]:text-[19px]">
-            ₹{{ currentTotalIncome | number }}
-          </h2>
-
-          <p class="dashboard mt-[7px] mb-0 mx-0 text-[11px] text-[#4ade80]">
-            Total income
-          </p>
-
-        </div>
-
-        <div class="dashboard grid place-items-center w-[40px] h-[40px] rounded-[10px] text-[20px] text-[#4ade80] bg-[#143323]">
-          ↗
-        </div>
-
-      </div>
-
-
-      <!-- EXPENSE -->
-
-      <div class="dashboard flex items-start justify-between min-h-[137px] p-[20px] bg-[#101722] border border-[#202c3d] rounded-[14px] max-[900px]:min-h-[125px] max-[900px]:p-[17px] max-[400px]:p-[15px]">
-
-        <div class="dashboard">
-
-          <span class="dashboard text-[12px]">
-            Total Expenses
-          </span>
-
-          <h2 class="dashboard m-0 text-[#f8fafc] mt-[12px] text-[23px] max-[400px]:text-[19px]">
-            ₹{{ currentTotalExpenses | number }}
-          </h2>
-
-          <p class="dashboard mt-[7px] mb-0 mx-0 text-[11px] text-[#f87171]">
-            Total expenses
-          </p>
-
-        </div>
-
-        <div class="dashboard grid place-items-center w-[40px] h-[40px] rounded-[10px] text-[20px] text-[#f87171] bg-[#3b1c24]">
-          ↘
-        </div>
-
-      </div>
-
-
-      <!-- SAVINGS -->
-
-      <div class="dashboard flex items-start justify-between min-h-[137px] p-[20px] bg-[#101722] border border-[#202c3d] rounded-[14px] max-[900px]:min-h-[125px] max-[900px]:p-[17px] max-[400px]:p-[15px]">
-
-        <div class="dashboard">
-
-          <span class="dashboard text-[12px]">
-            Net Savings
-          </span>
-
-          <h2 class="dashboard m-0 text-[#f8fafc] mt-[12px] text-[23px] max-[400px]:text-[19px]">
-            ₹{{ currentNetSavings | number }}
-          </h2>
-
-          <p class="dashboard mt-[7px] mb-0 mx-0 text-[11px] text-[#4ade80]">
-            Income − Expenses
-          </p>
-
-        </div>
-
-        <div class="dashboard grid place-items-center w-[40px] h-[40px] rounded-[10px] text-[20px] text-[#38bdf8] bg-[#102e3d]">
-          ◈
-        </div>
-
-      </div>
-
-    </section>
+    </ng-container>
 
 
     <!-- =====================================================
-         FINANCIAL OVERVIEW
+         FOCUSED SECTIONS (isolated, full width)
     ===================================================== -->
 
-    <section class="dashboard p-[22px] mb-[20px] bg-[#101722] border border-[#202c3d] rounded-[14px] max-[900px]:p-[16px] max-[900px]:rounded-[13px] max-[400px]:p-[13px]">
+    <ng-container *ngIf="activeSection === 'overview'">
+      <ng-container *ngTemplateOutlet="overviewSection"></ng-container>
+    </ng-container>
+
+    <div class="dashboard grid gap-[20px] [grid-template-columns:1fr]" *ngIf="activeSection === 'transactions'">
+      <ng-container *ngTemplateOutlet="transactionsPanel"></ng-container>
+    </div>
+
+    <div class="dashboard grid gap-[20px] [grid-template-columns:1fr]" *ngIf="activeSection === 'expenses'">
+      <ng-container *ngTemplateOutlet="expensePanel"></ng-container>
+    </div>
+
+    <div class="dashboard grid gap-[20px] [grid-template-columns:1fr]" *ngIf="activeSection === 'files'">
+      <ng-container *ngTemplateOutlet="filesPanel"></ng-container>
+    </div>
 
 
-      <div class="dashboard flex items-center justify-between gap-[18px] max-[1150px]:items-start max-[1150px]:flex-col max-[900px]:gap-[15px] min-[651px]:max-[900px]:items-start min-[651px]:max-[900px]:flex-col">
+    <!-- =====================================================
+         SUMMARY (tabbed overview)
+    ===================================================== -->
 
-        <div class="dashboard">
+    <ng-container *ngIf="activeSection === 'summary'">
 
-          <h2 class="dashboard m-0 text-[#f8fafc] text-[17px]">
-            Financial Overview
-          </h2>
+      <div id="summary-tabs" class="dashboard inline-flex gap-[4px] p-[4px] mb-[24px] bg-[#0b111b] border border-[#202c3d] rounded-full light:bg-[#f3f4f6] light:border-[#e5e7eb] max-[900px]:w-full max-[900px]:overflow-x-auto max-[900px]:flex-nowrap">
 
-          <p class="dashboard text-[#7f8ba0] mt-[7px] mb-0 mx-0 text-[12px]">
-            Track your income and expenses
-          </p>
+        <button
+          type="button"
+          class="dashboard flex items-center gap-[7px] border-0 rounded-full cursor-pointer whitespace-nowrap text-[13px] font-semibold transition-colors duration-200 active:scale-[0.97]"
+          style="font: inherit; padding: 9px 16px;"
+          [class]="summaryTab === 'balance' ? 'text-white bg-[#4f46e5] light:bg-[#4338ca]' : 'text-[#7f8ba0] bg-transparent hover:text-[#c7cedb] light:text-[#6b7280] light:hover:text-[#374151]'"
+          (click)="selectSummaryTab('balance')"
+        >
+          <span class="dashboard text-[13px]">◈</span>
+          Total Balance
+        </button>
 
-        </div>
+        <button
+          type="button"
+          class="dashboard flex items-center gap-[7px] border-0 rounded-full cursor-pointer whitespace-nowrap text-[13px] font-semibold transition-colors duration-200 active:scale-[0.97]"
+          style="font: inherit; padding: 9px 16px;"
+          [class]="summaryTab === 'overview' ? 'text-white bg-[#4f46e5] light:bg-[#4338ca]' : 'text-[#7f8ba0] bg-transparent hover:text-[#c7cedb] light:text-[#6b7280] light:hover:text-[#374151]'"
+          (click)="selectSummaryTab('overview')"
+        >
+          <span class="dashboard text-[13px]">▥</span>
+          Financial Overview
+        </button>
+
+        <button
+          type="button"
+          class="dashboard flex items-center gap-[7px] border-0 rounded-full cursor-pointer whitespace-nowrap text-[13px] font-semibold transition-colors duration-200 active:scale-[0.97]"
+          style="font: inherit; padding: 9px 16px;"
+          [class]="summaryTab === 'transactions' ? 'text-white bg-[#4f46e5] light:bg-[#4338ca]' : 'text-[#7f8ba0] bg-transparent hover:text-[#c7cedb] light:text-[#6b7280] light:hover:text-[#374151]'"
+          (click)="selectSummaryTab('transactions')"
+        >
+          <span class="dashboard text-[13px]">↗</span>
+          Recent Transactions
+        </button>
+
+        <button
+          type="button"
+          class="dashboard flex items-center gap-[7px] border-0 rounded-full cursor-pointer whitespace-nowrap text-[13px] font-semibold transition-colors duration-200 active:scale-[0.97]"
+          style="font: inherit; padding: 9px 16px;"
+          [class]="summaryTab === 'expenses' ? 'text-white bg-[#4f46e5] light:bg-[#4338ca]' : 'text-[#7f8ba0] bg-transparent hover:text-[#c7cedb] light:text-[#6b7280] light:hover:text-[#374151]'"
+          (click)="selectSummaryTab('expenses')"
+        >
+          <span class="dashboard text-[13px]">◉</span>
+          Expenses by Category
+        </button>
+
+      </div>
+
+      <ng-container *ngIf="summaryTab === 'balance'">
+        <ng-container *ngTemplateOutlet="summaryCards"></ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="summaryTab === 'overview'">
+        <ng-container *ngTemplateOutlet="overviewSection"></ng-container>
+      </ng-container>
+
+      <div class="dashboard grid gap-[20px] [grid-template-columns:1fr]" *ngIf="summaryTab === 'transactions'">
+        <ng-container *ngTemplateOutlet="transactionsPanel"></ng-container>
+      </div>
+
+      <div class="dashboard grid gap-[20px] [grid-template-columns:1fr]" *ngIf="summaryTab === 'expenses'">
+        <ng-container *ngTemplateOutlet="expensePanel"></ng-container>
+      </div>
+
+    </ng-container>
+
+  </main>
+
+  </ng-container>
+
+</div>
 
 
-        <!-- CHART SWITCHER -->
+<!-- =====================================================
+     REUSABLE SECTION TEMPLATES
+===================================================== -->
 
-        <div class="dashboard flex gap-[5px] p-[4px] bg-[#0b111b] rounded-[8px] max-[900px]:w-full max-[900px]:justify-start min-[651px]:max-[900px]:w-full min-[651px]:max-[900px]:justify-start">
+<ng-template #summaryCards>
 
-          <button
-            *ngFor="let chart of chartTypes"
-            type="button"
-            class="dashboard border-0 rounded-[6px] cursor-pointer"
-            style="font: inherit; padding: 8px 10px;"
-            [class]="
-              (selectedChart === chart.type ? 'text-[#f8fafc] bg-[#293050]' : 'text-[#8390a3] bg-transparent') +
-              ' max-[900px]:text-[11px]'
-            "
-            (click)="selectChart(chart.type)"
-          >
+  <section class="dashboard grid gap-[16px] mb-[20px] [grid-template-columns:repeat(4,minmax(0,1fr))] max-[1150px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-[900px]:[grid-template-columns:1fr] max-[900px]:gap-[12px]">
 
-            <span>
-              {{ chart.icon }}
-            </span>
 
-            {{ chart.name }}
+    <!-- BALANCE -->
 
-          </button>
+    <div class="dashboard flex items-start justify-between min-h-[137px] p-[20px] bg-[#101722] border border-[#202c3d] rounded-[14px] light:bg-[#fafbfe] light:border-[#e5e7eb] max-[900px]:min-h-[125px] max-[900px]:p-[17px] max-[400px]:p-[15px]">
 
-        </div>
+      <div class="dashboard">
+
+        <span class="dashboard text-[12px] text-[#7f8ba0] light:text-[#6b7280]">
+          Total Balance
+        </span>
+
+        <h2 class="dashboard m-0 text-[#f8fafc] mt-[12px] text-[23px] light:text-[#111827] max-[400px]:text-[19px]">
+          ₹{{ Math.abs(currentNetSavings) | number }}
+        </h2>
+
+        <p
+          class="dashboard mt-[7px] mb-0 mx-0 text-[11px]"
+          [class]="currentNetSavings < 0 ? 'text-[#f87171] light:text-[#dc2626]' : 'text-[#4ade80] light:text-[#16a34a]'"
+        >
+          {{ currentNetSavings < 0 ? 'Overspent this year' : 'Current balance' }}
+        </p>
+
+      </div>
+
+      <div class="dashboard grid place-items-center w-[40px] h-[40px] rounded-[10px] text-[20px] text-[#a78bfa] bg-[#211b42] light:text-[#7c3aed] light:bg-[#ede9fe]">
+
+        <svg class="dashboard w-[23px] h-[23px]" viewBox="0 0 24 24">
+
+          <path
+            d="M4 7.5A2.5 2.5 0 0 1 6.5 5H19a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 1 4 16.5v-9Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          />
+
+          <circle
+            cx="17"
+            cy="13"
+            r="1.5"
+            fill="currentColor"
+          />
+
+        </svg>
+
+      </div>
+
+    </div>
+
+
+    <!-- INCOME -->
+
+    <div class="dashboard flex items-start justify-between min-h-[137px] p-[20px] bg-[#101722] border border-[#202c3d] rounded-[14px] light:bg-[#fafbfe] light:border-[#e5e7eb] max-[900px]:min-h-[125px] max-[900px]:p-[17px] max-[400px]:p-[15px]">
+
+      <div class="dashboard">
+
+        <span class="dashboard text-[12px] text-[#7f8ba0] light:text-[#6b7280]">
+          Total Income
+        </span>
+
+        <h2 class="dashboard m-0 text-[#f8fafc] mt-[12px] text-[23px] light:text-[#111827] max-[400px]:text-[19px]">
+          ₹{{ currentTotalIncome | number }}
+        </h2>
+
+        <p class="dashboard mt-[7px] mb-0 mx-0 text-[11px] text-[#4ade80] light:text-[#16a34a]">
+          Total income
+        </p>
+
+      </div>
+
+      <div class="dashboard grid place-items-center w-[40px] h-[40px] rounded-[10px] text-[20px] text-[#4ade80] bg-[#143323] light:text-[#16a34a] light:bg-[#dcfce7]">
+        ↗
+      </div>
+
+    </div>
+
+
+    <!-- EXPENSE -->
+
+    <div class="dashboard flex items-start justify-between min-h-[137px] p-[20px] bg-[#101722] border border-[#202c3d] rounded-[14px] light:bg-[#fafbfe] light:border-[#e5e7eb] max-[900px]:min-h-[125px] max-[900px]:p-[17px] max-[400px]:p-[15px]">
+
+      <div class="dashboard">
+
+        <span class="dashboard text-[12px] text-[#7f8ba0] light:text-[#6b7280]">
+          Total Expenses
+        </span>
+
+        <h2 class="dashboard m-0 text-[#f8fafc] mt-[12px] text-[23px] light:text-[#111827] max-[400px]:text-[19px]">
+          ₹{{ currentTotalExpenses | number }}
+        </h2>
+
+        <p class="dashboard mt-[7px] mb-0 mx-0 text-[11px] text-[#f87171] light:text-[#dc2626]">
+          Total expenses
+        </p>
+
+      </div>
+
+      <div class="dashboard grid place-items-center w-[40px] h-[40px] rounded-[10px] text-[20px] text-[#f87171] bg-[#3b1c24] light:text-[#dc2626] light:bg-[#fee2e2]">
+        ↘
+      </div>
+
+    </div>
+
+
+    <!-- SAVINGS -->
+
+    <div class="dashboard flex items-start justify-between min-h-[137px] p-[20px] bg-[#101722] border border-[#202c3d] rounded-[14px] light:bg-[#fafbfe] light:border-[#e5e7eb] max-[900px]:min-h-[125px] max-[900px]:p-[17px] max-[400px]:p-[15px]">
+
+      <div class="dashboard">
+
+        <span class="dashboard text-[12px] text-[#7f8ba0] light:text-[#6b7280]">
+          Net Savings
+        </span>
+
+        <h2 class="dashboard m-0 text-[#f8fafc] mt-[12px] text-[23px] light:text-[#111827] max-[400px]:text-[19px]">
+          ₹{{ Math.abs(currentNetSavings) | number }}
+        </h2>
+
+        <p
+          class="dashboard mt-[7px] mb-0 mx-0 text-[11px]"
+          [class]="currentNetSavings < 0 ? 'text-[#f87171] light:text-[#dc2626]' : 'text-[#4ade80] light:text-[#16a34a]'"
+        >
+          Income − Expenses
+        </p>
+
+      </div>
+
+      <div class="dashboard grid place-items-center w-[40px] h-[40px] rounded-[10px] text-[20px] text-[#38bdf8] bg-[#102e3d] light:text-[#0284c7] light:bg-[#dbeafe]">
+        ◈
+      </div>
+
+    </div>
+
+  </section>
+
+</ng-template>
+
+
+<ng-template #overviewSection>
+
+  <section class="dashboard p-[22px] mb-[20px] bg-[#101722] border border-[#202c3d] rounded-[14px] light:bg-[#fafbfe] light:border-[#e5e7eb] max-[900px]:p-[16px] max-[900px]:rounded-[13px] max-[400px]:p-[13px]">
+
+
+    <div class="dashboard flex items-center justify-between gap-[18px] max-[1150px]:items-start max-[1150px]:flex-col max-[900px]:gap-[15px] min-[651px]:max-[900px]:items-start min-[651px]:max-[900px]:flex-col">
+
+      <div class="dashboard">
+
+        <h2 class="dashboard m-0 text-[#f8fafc] text-[17px] light:text-[#111827]">
+          Financial Overview
+        </h2>
+
+        <p class="dashboard text-[#7f8ba0] mt-[7px] mb-0 mx-0 text-[12px] light:text-[#6b7280]">
+          Track your income and expenses
+        </p>
 
       </div>
 
 
-      <!-- CHART CONTROLS -->
+      <!-- CHART SWITCHER -->
 
-      <div class="dashboard flex items-center justify-between gap-[18px] max-[900px]:items-start max-[900px]:flex-col max-[900px]:gap-[10px]" style="margin: 23px 0 12px;">
+      <div class="dashboard flex items-center gap-[20px] border-b border-[#202c3d] light:border-[#e5e7eb] max-[900px]:w-full max-[900px]:gap-[14px] max-[900px]:overflow-x-auto max-[900px]:flex-nowrap">
 
-        <div class="dashboard flex items-center gap-[18px] text-[#94a3b8] text-[11px] max-[900px]:gap-[15px]">
+        <button
+          *ngFor="let chart of chartTypes"
+          type="button"
+          class="dashboard relative group -mb-px flex items-center gap-[6px] border-0 border-b-2 bg-transparent cursor-pointer whitespace-nowrap text-[12px] font-semibold pb-[9px] pt-0 transition-colors duration-200"
+          style="font: inherit;"
+          [class]="selectedChart === chart.type ? 'text-[#818cf8] border-[#818cf8] light:text-[#4338ca] light:border-[#4338ca]' : 'text-[#8390a3] border-transparent hover:text-[#c7cedb] light:text-[#6b7280] light:hover:text-[#374151]'"
+          (click)="selectChart(chart.type)"
+        >
 
-          <ng-container
-            *ngIf="
-              selectedChart === 'bar' ||
-              selectedChart === 'line' ||
-              selectedChart === '3dline'
-            "
-          >
+          <span class="dashboard text-[13px]">
+            {{ chart.icon }}
+          </span>
 
-            <span class="dashboard flex items-center gap-[8px]">
+          {{ chart.name }}
 
-              <i class="dashboard w-[8px] h-[8px] rounded-full bg-[#8b5cf6] inline-block"></i>
+          <span class="dashboard pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-[10px] whitespace-nowrap px-[10px] py-[6px] rounded-[7px] text-[12px] font-semibold text-white bg-[#1c2432] border border-[#2a3648] shadow-[0_8px_20px_rgba(0,0,0,.35)] opacity-0 scale-95 transition-[opacity,transform] duration-150 z-[1100] group-hover:opacity-100 group-hover:scale-100 light:bg-[#111827] light:border-[#1f2937]">
+            View as {{ chart.name }}
+          </span>
 
-              Income
+        </button>
 
-            </span>
+      </div>
 
-            <span class="dashboard flex items-center gap-[8px]">
-
-              <i class="dashboard w-[8px] h-[8px] rounded-full bg-[#ef4444] inline-block"></i>
-
-              Expenses
-
-            </span>
-
-          </ng-container>
+    </div>
 
 
-          <ng-container
-            *ngIf="selectedChart === 'pie'"
-          >
+    <!-- CHART CONTROLS -->
 
-            <span class="dashboard flex items-center gap-[8px]">
+    <div class="dashboard flex items-center justify-between gap-[18px] max-[900px]:items-start max-[900px]:flex-col max-[900px]:gap-[10px]" style="margin: 23px 0 12px;">
 
-              <i class="dashboard w-[8px] h-[8px] rounded-full bg-[#8b5cf6] inline-block"></i>
+      <div class="dashboard flex items-center gap-[18px] text-[#94a3b8] text-[11px] light:text-[#6b7280] max-[900px]:gap-[15px]">
 
-              Total Income
+        <ng-container
+          *ngIf="
+            selectedChart === 'bar' ||
+            selectedChart === 'line' ||
+            selectedChart === '3dline'
+          "
+        >
 
-            </span>
+          <span class="dashboard flex items-center gap-[8px]">
 
-            <span class="dashboard flex items-center gap-[8px]">
+            <i class="dashboard w-[8px] h-[8px] rounded-full bg-[#8b5cf6] inline-block"></i>
 
-              <i class="dashboard w-[8px] h-[8px] rounded-full bg-[#ef4444] inline-block"></i>
+            Income
 
-              Total Expenses
+          </span>
 
-            </span>
+          <span class="dashboard flex items-center gap-[8px]">
 
-          </ng-container>
+            <i class="dashboard w-[8px] h-[8px] rounded-full bg-[#ef4444] inline-block"></i>
 
-        </div>
+            Expenses
+
+          </span>
+
+        </ng-container>
 
 
-        <div class="dashboard text-[#8b5cf6] text-[11px] max-[900px]:self-start">
-          ▣ {{ selectedYear }}
-        </div>
+        <ng-container
+          *ngIf="selectedChart === 'pie'"
+        >
+
+          <span class="dashboard flex items-center gap-[8px]">
+
+            <i class="dashboard w-[8px] h-[8px] rounded-full bg-[#8b5cf6] inline-block"></i>
+
+            Total Income
+
+          </span>
+
+          <span class="dashboard flex items-center gap-[8px]">
+
+            <i class="dashboard w-[8px] h-[8px] rounded-full bg-[#ef4444] inline-block"></i>
+
+            Total Expenses
+
+          </span>
+
+        </ng-container>
 
       </div>
 
 
-      <!-- MAIN CHART -->
+      <div class="dashboard text-[#8b5cf6] text-[11px] light:text-[#7c3aed] max-[900px]:self-start">
+        ▣ {{ selectedYear }}
+      </div>
 
-      <div class="dashboard h-[285px] max-[900px]:h-[280px] max-[400px]:h-[250px]">
+    </div>
+
+
+    <!-- MAIN CHART -->
+
+    <div class="dashboard h-[285px] max-[900px]:h-[280px] max-[400px]:h-[250px]">
+
+      <canvas
+        baseChart
+        [type]="chartJsType"
+        [data]="chartData"
+        [options]="chartOptions"
+      >
+      </canvas>
+
+    </div>
+
+  </section>
+
+</ng-template>
+
+
+<ng-template #transactionsPanel>
+
+  <div class="dashboard p-[20px] min-w-0 bg-[#101722] border border-[#202c3d] rounded-[14px] light:bg-[#fafbfe] light:border-[#e5e7eb] max-[900px]:p-[16px] max-[900px]:rounded-[13px]">
+
+    <div class="dashboard flex items-center justify-between gap-[18px]">
+
+      <div class="dashboard">
+
+        <h2 class="dashboard m-0 text-[#f8fafc] text-[17px] light:text-[#111827]">
+          Recent Transactions
+        </h2>
+
+        <p class="dashboard text-[#7f8ba0] mt-[7px] mb-0 mx-0 text-[12px] light:text-[#6b7280]">
+          Your latest financial activity
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="dashboard relative group grid place-items-center w-[32px] h-[32px] shrink-0 border border-[#3d3573] rounded-full text-[#c4b5fd] bg-[#1c1740] text-[16px] leading-none cursor-pointer hover:text-[#f8fafc] hover:bg-[#2a2260] light:text-[#6d28d9] light:bg-[#ede9fe] light:border-[#ddd6fe] light:hover:text-[#4c1d95] light:hover:bg-[#ddd6fe]"
+        (click)="openAddForm()"
+        aria-label="Add a new transaction"
+      >
+        +
+
+        <span class="dashboard pointer-events-none absolute right-0 top-full mt-[8px] whitespace-nowrap px-[10px] py-[6px] rounded-[7px] text-[12px] font-semibold text-white bg-[#1c2432] border border-[#2a3648] shadow-[0_8px_20px_rgba(0,0,0,.35)] opacity-0 scale-95 transition-[opacity,transform] duration-150 z-[1100] group-hover:opacity-100 group-hover:scale-100 light:bg-[#111827] light:border-[#1f2937]">
+          Add a new transaction
+        </span>
+      </button>
+
+    </div>
+
+
+    <!-- ADD TRANSACTION FORM -->
+
+    <div
+      class="dashboard p-[14px] mb-[14px] bg-[#0b111b] border border-[#202c3d] rounded-[11px] light:bg-[#f9fafb] light:border-[#e5e7eb]"
+      *ngIf="showAddForm()"
+    >
+
+      <div class="dashboard grid gap-[10px] mb-[10px] [grid-template-columns:1fr_1fr]">
+
+        <select
+          class="dashboard w-full h-[40px] px-[12px] py-0 rounded-[8px] border border-[#273142] bg-[#101722] text-[#e5e7eb] text-[12px] outline-none focus:border-[#6366f1] light:bg-white light:border-[#d1d5db] light:text-[#111827]"
+          style="font-family: inherit;"
+          [(ngModel)]="newType"
+          name="newType"
+        >
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+
+        <input
+          type="text"
+          class="dashboard w-full h-[40px] px-[12px] py-0 rounded-[8px] border border-[#273142] bg-[#101722] text-[#e5e7eb] text-[12px] outline-none focus:border-[#6366f1] light:bg-white light:border-[#d1d5db] light:text-[#111827]"
+          style="font-family: inherit;"
+          [(ngModel)]="newCategory"
+          name="newCategory"
+          placeholder="Category / description"
+        />
+
+      </div>
+
+      <div class="dashboard grid gap-[10px] mb-[10px] [grid-template-columns:1fr_1fr]">
+
+        <input
+          type="number"
+          class="dashboard w-full h-[40px] px-[12px] py-0 rounded-[8px] border border-[#273142] bg-[#101722] text-[#e5e7eb] text-[12px] outline-none focus:border-[#6366f1] light:bg-white light:border-[#d1d5db] light:text-[#111827]"
+          style="font-family: inherit;"
+          [(ngModel)]="newAmount"
+          name="newAmount"
+          placeholder="Amount"
+          min="0"
+          step="0.01"
+        />
+
+        <input
+          type="date"
+          class="dashboard w-full h-[40px] px-[12px] py-0 rounded-[8px] border border-[#273142] bg-[#101722] text-[#e5e7eb] text-[12px] outline-none focus:border-[#6366f1] light:bg-white light:border-[#d1d5db] light:text-[#111827]"
+          style="font-family: inherit;"
+          [(ngModel)]="newDate"
+          name="newDate"
+        />
+
+      </div>
+
+      <div
+        class="dashboard mb-[10px] rounded-[8px] bg-[rgba(239,68,68,0.1)] border border-[rgba(239,68,68,0.25)] text-[#f87171] text-[11px] light:text-[#dc2626]"
+        style="padding: 9px 11px;"
+        *ngIf="addError()"
+      >
+        {{ addError() }}
+      </div>
+
+      <div class="dashboard flex justify-end gap-[8px]">
+
+        <button
+          type="button"
+          class="dashboard border-0 rounded-[8px] text-[12px] font-semibold cursor-pointer text-[#94a3b8] bg-[#171d2b] disabled:opacity-60 disabled:cursor-not-allowed light:text-[#374151] light:bg-[#f3f4f6]"
+          style="font-family: inherit; padding: 8px 16px;"
+          (click)="closeAddForm()"
+          [disabled]="addSubmitting()"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          class="dashboard flex items-center gap-[7px] border-0 rounded-[8px] text-[12px] font-semibold cursor-pointer text-white disabled:opacity-60 disabled:cursor-not-allowed [background:linear-gradient(135deg,#6366f1,#4f46e5)]"
+          style="font-family: inherit; padding: 8px 16px;"
+          (click)="submitAddForm()"
+          [disabled]="addSubmitting()"
+        >
+          <svg
+            class="dashboard animate-spin w-[13px] h-[13px] text-white"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+            *ngIf="addSubmitting()"
+          >
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+          {{ addSubmitting() ? 'Saving...' : 'Save' }}
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- LOADING -->
+
+    <div
+      class="dashboard flex items-center justify-center gap-[8px] text-[#7f8ba0] text-[12px] light:text-[#6b7280]"
+      style="padding: 14px 0;"
+      *ngIf="loadingTransactions()"
+    >
+      <svg
+        class="dashboard animate-spin w-[14px] h-[14px] text-[#7f8ba0] light:text-[#6b7280]"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+        <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+      </svg>
+      Loading transactions...
+    </div>
+
+
+    <!-- ERROR -->
+
+    <p
+      class="dashboard text-[#f87171] text-[12px] text-center light:text-[#dc2626]"
+      style="padding: 14px 0;"
+      *ngIf="loadError()"
+    >
+      {{ loadError() }}
+    </p>
+
+
+    <!-- EMPTY STATE -->
+
+    <p
+      class="dashboard text-[#7f8ba0] text-[12px] text-center light:text-[#6b7280]"
+      style="padding: 14px 0;"
+      *ngIf="!loadingTransactions() && !loadError() && currentTransactions.length === 0"
+    >
+      No transactions yet for {{ selectedYear }}. Add your first one above.
+    </p>
+
+
+    <div
+      class="dashboard flex items-center gap-[11px] border-b border-[#202c3d] last:border-b-0 light:border-[#e5e7eb]"
+      style="padding: 15px 0;"
+      *ngFor="let transaction of currentTransactions"
+    >
+
+      <div
+        class="dashboard grid place-items-center w-[34px] h-[34px] rounded-[9px] text-[17px]"
+        [class]="transaction.type === 'Income' ? 'text-[#4ade80] bg-[#143323] light:text-[#16a34a] light:bg-[#dcfce7]' : 'text-[#f87171] bg-[#3b1c24] light:text-[#dc2626] light:bg-[#fee2e2]'"
+      >
+
+        {{
+          transaction.type === 'Income'
+            ? '↗'
+            : '↘'
+        }}
+
+      </div>
+
+
+      <div class="dashboard flex-1 min-w-0">
+
+        <strong class="dashboard block text-[#e5e7eb] text-[12px] light:text-[#111827]">
+          {{ transaction.name }}
+        </strong>
+
+        <span class="dashboard text-[#718096] text-[10px] light:text-[#6b7280]">
+
+          {{ transaction.date }}
+
+          &nbsp; • &nbsp;
+
+          {{ transaction.type }}
+
+        </span>
+
+      </div>
+
+
+      <strong
+        class="dashboard text-[12px] whitespace-nowrap"
+        [class]="transaction.type === 'Income' ? 'text-[#4ade80] light:text-[#16a34a]' : 'text-[#f87171] light:text-[#dc2626]'"
+      >
+
+        {{
+          transaction.amount >= 0
+            ? '+'
+            : '-'
+        }}
+
+        ₹{{ Math.abs(transaction.amount) | number }}
+
+      </strong>
+
+    </div>
+
+  </div>
+
+</ng-template>
+
+
+<ng-template #expensePanel>
+
+  <div class="dashboard p-[20px] min-w-0 bg-[#101722] border border-[#202c3d] rounded-[14px] light:bg-[#fafbfe] light:border-[#e5e7eb] max-[900px]:p-[16px] max-[900px]:rounded-[13px]">
+
+    <div class="dashboard flex items-center justify-between gap-[18px]">
+
+      <div class="dashboard">
+
+        <h2 class="dashboard m-0 text-[#f8fafc] text-[17px] light:text-[#111827]">
+          Expenses by Category
+          ({{ selectedYear }})
+        </h2>
+
+        <p class="dashboard text-[#7f8ba0] mt-[7px] mb-0 mx-0 text-[12px] light:text-[#6b7280]">
+          This year breakdown
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="dashboard flex items-center gap-[20px] h-[245px] mt-[18px] max-[900px]:flex-col max-[900px]:h-auto max-[900px]:gap-[10px]">
+
+
+      <!-- DONUT -->
+
+      <div class="dashboard relative w-[48%] h-[210px] shrink-0 max-[900px]:w-full max-[900px]:h-[230px]">
 
         <canvas
           baseChart
-          [type]="chartJsType"
-          [data]="chartData"
-          [options]="chartOptions"
+          type="doughnut"
+          [data]="{
+            labels: currentExpenseCategories,
+            datasets: [{
+              data: currentExpenseValues,
+              backgroundColor: [
+                '#6366f1',
+                '#ef4444',
+                '#f59e0b',
+                '#22c55e',
+                '#06b6d4',
+                '#ec4899'
+              ],
+              borderColor: themeService.isLight() ? '#ffffff' : '#0d1420',
+              borderWidth: 2
+            }]
+          }"
+          [options]="{
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '62%',
+            plugins: {
+              legend: {
+                display: false
+              }
+            }
+          }"
         >
         </canvas>
 
+
+        <div class="dashboard absolute inset-0 grid place-content-center text-center pointer-events-none">
+
+          <strong class="dashboard text-[#f8fafc] text-[14px] light:text-[#111827]">
+            ₹{{ currentTotalExpenses | number }}
+          </strong>
+
+          <span class="dashboard mt-[4px] text-[#718096] text-[9px] light:text-[#6b7280]">
+            Total Expenses
+          </span>
+
+        </div>
+
       </div>
 
-    </section>
 
+      <!-- LEGEND -->
 
-    <!-- =====================================================
-         BOTTOM GRID
-    ===================================================== -->
-
-    <section class="dashboard grid gap-[20px] [grid-template-columns:1.1fr_0.9fr] max-[900px]:[grid-template-columns:1fr] max-[900px]:gap-[14px] min-[651px]:max-[900px]:[grid-template-columns:1fr]">
-
-
-      <!-- TRANSACTIONS -->
-
-      <div class="dashboard p-[20px] min-w-0 bg-[#101722] border border-[#202c3d] rounded-[14px] max-[900px]:p-[16px] max-[900px]:rounded-[13px]">
-
-        <div class="dashboard flex items-center justify-between gap-[18px]">
-
-          <div class="dashboard">
-
-            <h2 class="dashboard m-0 text-[#f8fafc] text-[17px]">
-              Recent Transactions
-            </h2>
-
-            <p class="dashboard text-[#7f8ba0] mt-[7px] mb-0 mx-0 text-[12px]">
-              Your latest financial activity
-            </p>
-
-          </div>
-
-          <button
-            type="button"
-            class="dashboard border border-[#3d3573] rounded-[8px] text-[#c4b5fd] bg-[#1c1740] text-[11px] font-semibold cursor-pointer hover:text-[#f8fafc] hover:bg-[#2a2260]"
-            style="font-family: inherit; padding: 7px 14px;"
-            (click)="openAddForm()"
-          >
-            + Add
-          </button>
-
-        </div>
-
-
-        <!-- ADD TRANSACTION FORM -->
+      <div class="dashboard grid content-start flex-1 min-w-0 gap-[10px] h-full overflow-y-auto pr-[4px] max-[900px]:w-full max-[900px]:gap-[12px]">
 
         <div
-          class="dashboard p-[14px] mb-[14px] bg-[#0b111b] border border-[#202c3d] rounded-[11px]"
-          *ngIf="showAddForm()"
+          class="dashboard flex items-center justify-between gap-[10px] text-[#94a3b8] text-[10px] light:text-[#6b7280]"
+          *ngFor="
+            let category of currentExpenseCategories;
+            let i = index
+          "
         >
 
-          <div class="dashboard grid gap-[10px] mb-[10px] [grid-template-columns:1fr_1fr]">
+          <div class="dashboard flex items-center gap-[8px] min-w-0 overflow-hidden">
 
-            <select
-              class="dashboard w-full h-[40px] px-[12px] py-0 rounded-[8px] border border-[#273142] bg-[#101722] text-[#e5e7eb] text-[12px] outline-none focus:border-[#6366f1]"
-              style="font-family: inherit;"
-              [(ngModel)]="newType"
-              name="newType"
+            <span
+              class="dashboard inline-block shrink-0 w-[8px] h-[8px] rounded-full"
+              [style.background]="categoryColor(i)"
             >
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-            </select>
+            </span>
 
-            <input
-              type="text"
-              class="dashboard w-full h-[40px] px-[12px] py-0 rounded-[8px] border border-[#273142] bg-[#101722] text-[#e5e7eb] text-[12px] outline-none focus:border-[#6366f1]"
-              style="font-family: inherit;"
-              [(ngModel)]="newCategory"
-              name="newCategory"
-              placeholder="Category / description"
-            />
-
-          </div>
-
-          <div class="dashboard grid gap-[10px] mb-[10px] [grid-template-columns:1fr_1fr]">
-
-            <input
-              type="number"
-              class="dashboard w-full h-[40px] px-[12px] py-0 rounded-[8px] border border-[#273142] bg-[#101722] text-[#e5e7eb] text-[12px] outline-none focus:border-[#6366f1]"
-              style="font-family: inherit;"
-              [(ngModel)]="newAmount"
-              name="newAmount"
-              placeholder="Amount"
-              min="0"
-              step="0.01"
-            />
-
-            <input
-              type="date"
-              class="dashboard w-full h-[40px] px-[12px] py-0 rounded-[8px] border border-[#273142] bg-[#101722] text-[#e5e7eb] text-[12px] outline-none focus:border-[#6366f1]"
-              style="font-family: inherit;"
-              [(ngModel)]="newDate"
-              name="newDate"
-            />
-
-          </div>
-
-          <div
-            class="dashboard mb-[10px] rounded-[8px] bg-[rgba(239,68,68,0.1)] border border-[rgba(239,68,68,0.25)] text-[#f87171] text-[11px]"
-            style="padding: 9px 11px;"
-            *ngIf="addError()"
-          >
-            {{ addError() }}
-          </div>
-
-          <div class="dashboard flex justify-end gap-[8px]">
-
-            <button
-              type="button"
-              class="dashboard border-0 rounded-[8px] text-[12px] font-semibold cursor-pointer text-[#94a3b8] bg-[#171d2b] disabled:opacity-60 disabled:cursor-not-allowed"
-              style="font-family: inherit; padding: 8px 16px;"
-              (click)="closeAddForm()"
-              [disabled]="addSubmitting()"
-            >
-              Cancel
-            </button>
-
-            <button
-              type="button"
-              class="dashboard border-0 rounded-[8px] text-[12px] font-semibold cursor-pointer text-white disabled:opacity-60 disabled:cursor-not-allowed [background:linear-gradient(135deg,#6366f1,#4f46e5)]"
-              style="font-family: inherit; padding: 8px 16px;"
-              (click)="submitAddForm()"
-              [disabled]="addSubmitting()"
-            >
-              {{ addSubmitting() ? 'Saving...' : 'Save' }}
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <!-- LOADING -->
-
-        <p
-          class="dashboard text-[#7f8ba0] text-[12px] text-center"
-          style="padding: 14px 0;"
-          *ngIf="loadingTransactions()"
-        >
-          Loading transactions...
-        </p>
-
-
-        <!-- ERROR -->
-
-        <p
-          class="dashboard text-[#f87171] text-[12px] text-center"
-          style="padding: 14px 0;"
-          *ngIf="loadError()"
-        >
-          {{ loadError() }}
-        </p>
-
-
-        <!-- EMPTY STATE -->
-
-        <p
-          class="dashboard text-[#7f8ba0] text-[12px] text-center"
-          style="padding: 14px 0;"
-          *ngIf="!loadingTransactions() && !loadError() && currentTransactions.length === 0"
-        >
-          No transactions yet for {{ selectedYear }}. Add your first one above.
-        </p>
-
-
-        <div
-          class="dashboard flex items-center gap-[11px] border-b border-[#202c3d] last:border-b-0"
-          style="padding: 15px 0;"
-          *ngFor="let transaction of currentTransactions"
-        >
-
-          <div
-            class="dashboard grid place-items-center w-[34px] h-[34px] rounded-[9px] text-[17px]"
-            [class]="transaction.type === 'Income' ? 'text-[#4ade80] bg-[#143323]' : 'text-[#f87171] bg-[#3b1c24]'"
-          >
-
-            {{
-              transaction.type === 'Income'
-                ? '↗'
-                : '↘'
-            }}
-
-          </div>
-
-
-          <div class="dashboard flex-1 min-w-0">
-
-            <strong class="dashboard block text-[#e5e7eb] text-[12px]">
-              {{ transaction.name }}
-            </strong>
-
-            <span class="dashboard text-[#718096] text-[10px]">
-
-              {{ transaction.date }}
-
-              &nbsp; • &nbsp;
-
-              {{ transaction.type }}
-
+            <span class="dashboard overflow-hidden text-ellipsis whitespace-nowrap">
+              {{ category }}
             </span>
 
           </div>
 
-
-          <strong
-            class="dashboard text-[12px] whitespace-nowrap"
-            [class]="transaction.type === 'Income' ? 'text-[#4ade80]' : 'text-[#f87171]'"
-          >
-
-            {{
-              transaction.amount >= 0
-                ? '+'
-                : '-'
-            }}
-
-            ₹{{ Math.abs(transaction.amount) | number }}
-
+          <strong class="dashboard shrink-0 whitespace-nowrap light:text-[#111827]">
+            ₹{{ currentExpenseValues[i] | number }}
           </strong>
 
         </div>
 
       </div>
 
+    </div>
 
-      <!-- EXPENSE CATEGORY -->
+  </div>
 
-      <div class="dashboard p-[20px] min-w-0 bg-[#101722] border border-[#202c3d] rounded-[14px] max-[900px]:p-[16px] max-[900px]:rounded-[13px]">
+</ng-template>
 
-        <div class="dashboard flex items-center justify-between gap-[18px]">
 
-          <div class="dashboard">
+<ng-template #filesPanel>
 
-            <h2 class="dashboard m-0 text-[#f8fafc] text-[17px]">
-              Expenses by Category
-              ({{ selectedYear }})
-            </h2>
+  <div class="dashboard p-[20px] min-w-0 bg-[#101722] border border-[#202c3d] rounded-[14px] light:bg-[#fafbfe] light:border-[#e5e7eb] max-[900px]:p-[16px] max-[900px]:rounded-[13px]">
 
-            <p class="dashboard text-[#7f8ba0] mt-[7px] mb-0 mx-0 text-[12px]">
-              This year breakdown
-            </p>
+    <div class="dashboard">
 
-          </div>
+      <h2 class="dashboard m-0 text-[#f8fafc] text-[17px] light:text-[#111827]">
+        Files
+      </h2>
 
+      <p class="dashboard text-[#7f8ba0] mt-[7px] mb-0 mx-0 text-[12px] light:text-[#6b7280]">
+        Upload a receipt or document — it's attached to your most recent transaction
+      </p>
+
+    </div>
+
+
+    <!-- UPLOAD FORM -->
+
+    <div
+      class="dashboard p-[14px] mt-[16px] mb-[16px] bg-[#0b111b] border border-[#202c3d] rounded-[11px] light:bg-[#f9fafb] light:border-[#e5e7eb]"
+    >
+
+      <p
+        class="dashboard text-[#7f8ba0] text-[12px] text-center light:text-[#6b7280]"
+        style="padding: 6px 0;"
+        *ngIf="currentTransactions.length === 0"
+      >
+        Add a transaction first, then come back here to attach a file to it.
+      </p>
+
+      <div
+        class="dashboard flex justify-end"
+        *ngIf="currentTransactions.length > 0"
+      >
+
+        <label
+          for="fileUploadInput"
+          class="dashboard relative group inline-flex items-center justify-center w-[34px] h-[34px] rounded-full text-[#8b5cf6] cursor-pointer transition-colors duration-150 hover:bg-[#1c1740] light:text-[#7c3aed] light:hover:bg-[#ede9fe]"
+          [class]="uploadingTransactionId() !== null ? 'opacity-60 pointer-events-none' : ''"
+          aria-label="Upload a file"
+        >
+          <svg class="dashboard w-[17px] h-[17px]" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 16V4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M7 8.5 12 3.5 17 8.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M4.5 15.5v3a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+
+          <span class="dashboard pointer-events-none absolute right-0 top-full mt-[8px] whitespace-nowrap px-[10px] py-[6px] rounded-[7px] text-[12px] font-semibold text-white bg-[#1c2432] border border-[#2a3648] shadow-[0_8px_20px_rgba(0,0,0,.35)] opacity-0 scale-95 transition-[opacity,transform] duration-150 z-[1100] group-hover:opacity-100 group-hover:scale-100 light:bg-[#111827] light:border-[#1f2937]">
+            Attach a file to your most recent transaction
+          </span>
+        </label>
+
+        <input
+          id="fileUploadInput"
+          type="file"
+          class="dashboard hidden"
+          (change)="onFileSelectedForUpload($event)"
+          [disabled]="uploadingTransactionId() !== null"
+        />
+
+      </div>
+
+
+      <!-- UPLOAD PROGRESS -->
+
+      <div
+        class="dashboard mt-[12px]"
+        *ngIf="uploadingTransactionId() !== null"
+      >
+
+        <div class="dashboard flex items-center justify-between mb-[6px] text-[#94a3b8] text-[11px] light:text-[#6b7280]">
+          <span>{{ uploadProgress() === 100 ? 'Upload complete' : 'Uploading...' }}</span>
+          <span>{{ uploadProgress() }}%</span>
         </div>
 
-
-        <div class="dashboard flex items-center gap-[20px] h-[245px] mt-[18px] max-[900px]:flex-col max-[900px]:h-auto max-[900px]:gap-[10px]">
-
-
-          <!-- DONUT -->
-
-          <div class="dashboard relative w-[48%] h-[210px] shrink-0 max-[900px]:w-full max-[900px]:h-[230px]">
-
-            <canvas
-              baseChart
-              type="doughnut"
-              [data]="{
-                labels: currentExpenseCategories,
-                datasets: [{
-                  data: currentExpenseValues,
-                  backgroundColor: [
-                    '#6366f1',
-                    '#ef4444',
-                    '#f59e0b',
-                    '#22c55e',
-                    '#06b6d4',
-                    '#ec4899'
-                  ],
-                  borderColor: '#0d1420',
-                  borderWidth: 2
-                }]
-              }"
-              [options]="{
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '62%',
-                plugins: {
-                  legend: {
-                    display: false
-                  }
-                }
-              }"
-            >
-            </canvas>
-
-
-            <div class="dashboard absolute inset-0 grid place-content-center text-center pointer-events-none">
-
-              <strong class="dashboard text-[#f8fafc] text-[14px]">
-                ₹{{ currentTotalExpenses | number }}
-              </strong>
-
-              <span class="dashboard mt-[4px] text-[#718096] text-[9px]">
-                Total Expenses
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <!-- LEGEND -->
-
-          <div class="dashboard grid content-start flex-1 min-w-0 gap-[10px] h-full overflow-y-auto pr-[4px] max-[900px]:w-full max-[900px]:gap-[12px]">
-
-            <div
-              class="dashboard flex items-center justify-between gap-[10px] text-[#94a3b8] text-[10px]"
-              *ngFor="
-                let category of currentExpenseCategories;
-                let i = index
-              "
-            >
-
-              <div class="dashboard flex items-center gap-[8px] min-w-0 overflow-hidden">
-
-                <span
-                  class="dashboard inline-block shrink-0 w-[8px] h-[8px] rounded-full"
-                  [style.background]="categoryColor(i)"
-                >
-                </span>
-
-                <span class="dashboard overflow-hidden text-ellipsis whitespace-nowrap">
-                  {{ category }}
-                </span>
-
-              </div>
-
-              <strong class="dashboard shrink-0 whitespace-nowrap">
-                ₹{{ currentExpenseValues[i] | number }}
-              </strong>
-
-            </div>
-
-          </div>
-
+        <div class="dashboard w-full h-[8px] rounded-full overflow-hidden bg-[#0b111b] light:bg-[#f3f4f6]">
+          <div
+            class="dashboard h-full rounded-full [background:linear-gradient(135deg,#6366f1,#4f46e5)] transition-[width] duration-150"
+            [style.width.%]="uploadProgress()"
+          ></div>
         </div>
 
       </div>
 
-    </section>
 
-  </main>
+      <!-- UPLOAD ERROR -->
 
-</div>
+      <div
+        class="dashboard mt-[12px] rounded-[8px] bg-[rgba(239,68,68,0.1)] border border-[rgba(239,68,68,0.25)] text-[#f87171] text-[11px] light:text-[#dc2626]"
+        style="padding: 9px 11px;"
+        *ngIf="filesError()"
+      >
+        {{ filesError() }}
+      </div>
+
+    </div>
+
+
+    <!-- ATTACHED FILES LIST (across all transactions loaded for the selected year) -->
+
+    <p
+      class="dashboard text-[#7f8ba0] text-[12px] text-center light:text-[#6b7280]"
+      style="padding: 14px 0;"
+      *ngIf="allAttachedFiles.length === 0"
+    >
+      No files uploaded yet for {{ selectedYear }}.
+    </p>
+
+    <div
+      class="dashboard flex items-center gap-[11px] border-b border-[#202c3d] last:border-b-0 light:border-[#e5e7eb]"
+      style="padding: 15px 0;"
+      *ngFor="let entry of allAttachedFiles"
+    >
+
+      <div class="dashboard grid place-items-center w-[34px] h-[34px] shrink-0 rounded-[9px] text-[#a78bfa] bg-[#211b42] light:text-[#7c3aed] light:bg-[#ede9fe]">
+        <svg class="dashboard w-[16px] h-[16px]" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M6.5 3.5h7l5 5v11a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M13.5 3.5v4a1 1 0 0 0 1 1h4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+
+      <div class="dashboard flex-1 min-w-0">
+
+        <strong class="dashboard block text-[#e5e7eb] text-[12px] overflow-hidden text-ellipsis whitespace-nowrap light:text-[#111827]">
+          {{ entry.file.fileName }}
+        </strong>
+
+        <span class="dashboard text-[#718096] text-[10px] light:text-[#6b7280]">
+          {{ formatFileSize(entry.file.sizeBytes) }}
+        </span>
+
+      </div>
+
+      <button
+        type="button"
+        class="dashboard relative group border-0 rounded-[8px] text-[11px] font-semibold cursor-pointer text-[#94a3b8] bg-[#171d2b] light:text-[#374151] light:bg-[#f3f4f6]"
+        style="font-family: inherit; padding: 7px 14px;"
+        (click)="downloadFile(entry.file)"
+      >
+        Download
+
+        <span class="dashboard pointer-events-none absolute right-0 top-full mt-[8px] whitespace-nowrap px-[10px] py-[6px] rounded-[7px] text-[12px] font-semibold text-white bg-[#1c2432] border border-[#2a3648] shadow-[0_8px_20px_rgba(0,0,0,.35)] opacity-0 scale-95 transition-[opacity,transform] duration-150 z-[1100] group-hover:opacity-100 group-hover:scale-100 light:bg-[#111827] light:border-[#1f2937]">
+          Download {{ entry.file.fileName }}
+        </span>
+      </button>
+
+    </div>
+
+  </div>
+
+</ng-template>

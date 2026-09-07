@@ -1,0 +1,113 @@
+<div class="min-h-screen w-full box-border flex flex-col justify-center relative overflow-x-hidden bg-[#0b0f1a] light:bg-[#f5f3ff]">
+
+  <!-- THEME TOGGLE -->
+
+  <button
+    type="button"
+    class="home-toggle fixed top-[22px] right-[22px] z-[20] flex items-center justify-center w-[42px] h-[42px] border border-[#253044] rounded-[9px] cursor-pointer text-[#aab4c4] bg-[#101722] text-[16px] transition-transform duration-200 hover:scale-110 light:text-[#7c3aed] light:bg-white light:border-[#e5e7eb] max-[550px]:top-[14px] max-[550px]:right-[14px]"
+    (click)="themeService.toggle()"
+    aria-label="Toggle day/night mode"
+  >
+    {{ themeService.isLight() ? '☀' : '☾' }}
+  </button>
+
+
+  <!-- =====================================================
+       HERO (theme-aware)
+  ====================================================== -->
+
+  <div class="flex flex-col items-center justify-center relative px-[24px] pt-[70px] pb-[80px] max-[550px]:pt-[56px] max-[550px]:pb-[64px]">
+
+    <!-- AMBIENT DRIFTING BLOBS -->
+
+    <span
+      class="home-blob-a absolute top-[8%] left-[8%] w-[130px] h-[130px] rounded-full bg-[#6366f1] opacity-[0.12] blur-[50px] pointer-events-none light:opacity-[0.14]"
+      aria-hidden="true"
+    ></span>
+
+    <span
+      class="home-blob-b absolute bottom-[6%] right-[10%] w-[110px] h-[110px] rounded-full bg-[#818cf8] opacity-[0.1] blur-[46px] pointer-events-none light:opacity-[0.12]"
+      aria-hidden="true"
+    ></span>
+
+
+    <!-- ANIMATED BAR CHART + TREND LINE -->
+
+    <svg
+      class="w-[150px] h-[98px] mb-[30px]"
+      viewBox="0 0 140 96"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <rect class="home-bar" x="5"   y="60" width="18" height="24" rx="4" fill="#6366f1" />
+      <rect class="home-bar" x="33"  y="48" width="18" height="36" rx="4" fill="#6366f1" fill-opacity="0.85" />
+      <rect class="home-bar" x="61"  y="36" width="18" height="48" rx="4" fill="#6366f1" fill-opacity="0.7" />
+      <rect class="home-bar" x="89"  y="24" width="18" height="60" rx="4" fill="#818cf8" />
+      <rect class="home-bar" x="117" y="12" width="18" height="72" rx="4" fill="#4338ca" />
+
+      <path
+        class="home-trend-line"
+        d="M14,60 L42,48 L70,36 L98,24 L126,12"
+        stroke="#a5b4fc"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+
+      <circle class="home-trend-dot" cx="126" cy="12" r="4.5" fill="#c7d2fe" />
+    </svg>
+
+
+    <h1 class="home-title m-0 text-center text-[44px] font-extrabold leading-[1.05] tracking-tight text-white light:text-[#111827] max-w-[340px] max-[380px]:text-[34px]">
+      Finova Dashboard
+    </h1>
+
+    <p class="home-tagline mt-[16px] mb-0 mx-0 text-center text-[19px] font-semibold leading-[1.3] text-[#a5b4fc] light:text-[#4338ca] max-[380px]:text-[16px]">
+      Know your finances better
+    </p>
+
+    <p class="home-subtitle mt-[10px] mb-0 mx-0 text-center text-[#6b7280] text-[13px] leading-[1.3]">
+      Track income, expenses and savings — all in one place
+    </p>
+
+  </div>
+
+
+  <!-- =====================================================
+       CTA PANEL (theme-aware)
+  ====================================================== -->
+
+  <div class="home-panel relative -mt-[40px] z-[10] rounded-t-[42px] bg-[#0a0e18] light:bg-white pt-[70px] pb-[50px] px-[30px] flex flex-col items-center box-border shadow-[0_-20px_50px_rgba(0,0,0,.25)] light:shadow-[0_-10px_40px_rgba(15,23,42,.08)] max-[550px]:pt-[54px] max-[550px]:pb-[40px]">
+
+    <!-- decorative accents along the curve -->
+    <span class="home-dot absolute top-[26px] left-[18%] w-[9px] h-[9px] rounded-full bg-[#818cf8]"></span>
+    <span class="home-dot absolute top-[14px] left-[32%] w-[6px] h-[6px] [clip-path:polygon(50%_0%,0%_100%,100%_100%)] bg-[#a5b4fc]"></span>
+    <span class="home-dot absolute top-[20px] right-[22%] w-[7px] h-[7px] rounded-full bg-[#6366f1]"></span>
+
+    <div class="w-full max-w-[360px] flex flex-col gap-[14px]">
+
+      <a
+        routerLink="/login"
+        class="home-btn home-btn-primary w-full h-[54px] box-border border-0 rounded-full text-white text-[16px] font-bold cursor-pointer flex items-center justify-center no-underline [background:linear-gradient(135deg,#6366f1,#4f46e5)] transition-transform duration-[250ms] ease-in-out hover:-translate-y-[2px]"
+      >
+        Log in
+      </a>
+
+      <a
+        routerLink="/login"
+        class="home-btn w-full h-[54px] box-border border border-[#2a3348] rounded-full text-[#c7cedb] text-[16px] font-bold cursor-pointer flex items-center justify-center no-underline bg-transparent transition-[background,border-color] duration-[250ms] ease-in-out hover:bg-[#141a29] hover:border-[#3a4658] light:text-[#374151] light:border-[#d1d5db] light:hover:bg-[#f3f4f6]"
+      >
+        Sign up
+      </a>
+
+    </div>
+
+
+    <div class="home-subtitle text-center text-[#4b5563] text-[11px] mt-[26px] leading-[1.4] light:text-[#9ca3af]" style="animation-delay: 1.8s;">
+      Secure Finance Management
+    </div>
+
+  </div>
+
+</div>
