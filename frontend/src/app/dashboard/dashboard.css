@@ -1,0 +1,11 @@
+/* =====================================================
+   BOX-SIZING RESET
+   =====================================================
+   A subtree-wide reset — not expressible as a per-element
+   Tailwind utility, kept as plain CSS.
+   ===================================================== */
+
+.dashboard,
+.dashboard * {
+  box-sizing: border-box;
+}
