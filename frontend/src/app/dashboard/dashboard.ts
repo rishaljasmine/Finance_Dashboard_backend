@@ -14,9 +14,11 @@ import {
 import {
   FinanceService,
   Transaction,
-  UploadedFileInfo
+  UploadedFileInfo,
+  DashboardSummary
 } from '../finance.service';
 import { ThemeService } from '../theme.service';
+import { AuthService } from '../auth.service';
 
 type DashboardChartType =
   | 'bar'
@@ -87,12 +89,16 @@ export class DashboardComponent implements OnInit {
   // The sidebar itself (collapse state, mobile drawer, the Financial
   // Overview submenu) is now owned by the <finova-sidebar> microfrontend
   // — see dashboard.html and onSidebarNavigate/onSidebarChartSelect/
-  // onSidebarLayoutChange below. sidebarCollapsed/mobileSidebarOpen still
-  // live here only because <main>'s margin depends on them; they're kept
-  // in sync via the sidebar's layout-change event, never set directly.
+  // onSidebarLayoutChange below. sidebarCollapsed/mobileSidebarOpen/
+  // sidebarWidth still live here only because <main>'s margin depends on
+  // them; they're kept in sync via the sidebar's layout-change event,
+  // never set directly. sidebarWidth only varies in the expanded desktop
+  // state, once the user drags the sidebar's resize handle.
 
   sidebarCollapsed = false;
   mobileSidebarOpen = false;
+  sidebarWidth = 245;
+  sidebarResizing = false;
 
 
   // =====================================================
@@ -200,6 +206,14 @@ export class DashboardComponent implements OnInit {
 
 
   // =====================================================
+  // DASHBOARD SUMMARY (from REST — totals, monthly
+  // breakdown, expenses by category)
+  // =====================================================
+
+  dashboardSummary = signal<DashboardSummary | null>(null);
+
+
+  // =====================================================
   // ADD TRANSACTION FORM
   // =====================================================
 
@@ -207,9 +221,9 @@ export class DashboardComponent implements OnInit {
   addSubmitting = signal(false);
   addError = signal('');
 
-  // Shows a skeleton in place of the dashboard briefly on first load,
-  // Instagram-style, instead of an instant flash of content.
-  pageReady = signal(false);
+  // The dashboard is server-rendered with its data, so it is shown
+  // immediately (a skeleton delay would flash over the SSR'd content).
+  pageReady = signal(true);
 
   newType: 'income' | 'expense' = 'income';
   newCategory = '';
@@ -236,37 +250,28 @@ export class DashboardComponent implements OnInit {
   constructor(
     private router: Router,
     private financeService: FinanceService,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private auth: AuthService
   ) {}
 
 
   // =====================================================
   // INITIALIZATION
   // =====================================================
+  //
+  // Runs on the SSR server first and again in the browser during hydration.
+  // authGuard has already confirmed the session and cached the user, and the
+  // three REST calls below are answered from Angular's transfer cache in the
+  // browser, so the initial load makes no duplicate requests.
 
   ngOnInit(): void {
 
-    const loggedIn =
-      localStorage.getItem('loggedIn');
+    const user = this.auth.user();
 
-    if (loggedIn !== 'true') {
-
-      this.router.navigate(['/login']);
-
-      return;
-    }
-
-    this.username =
-      localStorage.getItem('username') || 'User';
-
-    this.userEmail =
-      localStorage.getItem('email') ||
-      localStorage.getItem('gmail') ||
-      '';
+    this.username = user?.username || 'User';
+    this.userEmail = user?.email || '';
 
     this.loadYears();
-
-    setTimeout(() => this.pageReady.set(true), 700);
   }
 
 
@@ -366,6 +371,39 @@ export class DashboardComponent implements OnInit {
       }
 
     });
+
+    this.loadDashboardSummary();
+  }
+
+
+  // =====================================================
+  // LOAD THE DASHBOARD SUMMARY FOR THE SELECTED YEAR
+  // (REST — totals, monthly breakdown, expenses by
+  // category, computed server-side in one round trip)
+  // =====================================================
+
+  private loadDashboardSummary(): void {
+
+    this.financeService.getDashboard(
+      this.selectedYear
+    ).subscribe({
+
+      next: (summary) => {
+        this.dashboardSummary.set(summary);
+      },
+
+      error: (error) => {
+
+        if (error.status === 401) {
+          this.logout();
+          return;
+        }
+
+        // Leave the previous summary in place rather than blanking
+        // the totals/charts over a transient error.
+      }
+
+    });
   }
 
 
@@ -422,11 +460,18 @@ export class DashboardComponent implements OnInit {
 
   onSidebarLayoutChange(event: Event): void {
 
-    const { collapsed, mobileOpen } =
-      (event as CustomEvent<{ collapsed: boolean; mobileOpen: boolean }>).detail;
+    const { collapsed, mobileOpen, width, resizing } =
+      (event as CustomEvent<{
+        collapsed: boolean;
+        mobileOpen: boolean;
+        width: number;
+        resizing: boolean;
+      }>).detail;
 
     this.sidebarCollapsed = collapsed;
     this.mobileSidebarOpen = mobileOpen;
+    this.sidebarWidth = width;
+    this.sidebarResizing = resizing;
 
   }
 
@@ -473,38 +518,36 @@ export class DashboardComponent implements OnInit {
 
 
   // =====================================================
-  // EXPENSE BY CATEGORY (derived from real transactions)
+  // DASHBOARD SUMMARY (GraphQL) — falls back to zeroed-out
+  // data until the first response arrives
   // =====================================================
 
-  private get expenseByCategory(): Record<string, number> {
+  private get summary(): DashboardSummary {
 
-    const totals: Record<string, number> = {};
-
-    for (const transaction of this.transactions()) {
-
-      if (transaction.type !== 'expense') {
-        continue;
-      }
-
-      totals[transaction.category] =
-        (totals[transaction.category] || 0) +
-        transaction.amount;
-    }
-
-    return totals;
+    return this.dashboardSummary() ?? {
+      totalIncome: 0,
+      totalExpense: 0,
+      balance: 0,
+      monthlySummary: [],
+      expensesByCategory: []
+    };
   }
 
 
+  // =====================================================
+  // EXPENSE BY CATEGORY
+  // =====================================================
+
   get currentExpenseCategories(): string[] {
 
-    return Object.keys(this.expenseByCategory);
+    return this.summary.expensesByCategory.map(entry => entry.category);
 
   }
 
 
   get currentExpenseValues(): number[] {
 
-    return Object.values(this.expenseByCategory);
+    return this.summary.expensesByCategory.map(entry => entry.amount);
 
   }
 
@@ -515,28 +558,21 @@ export class DashboardComponent implements OnInit {
 
   get currentTotalIncome(): number {
 
-    return this.transactions()
-      .filter(transaction => transaction.type === 'income')
-      .reduce((total, transaction) => total + transaction.amount, 0);
+    return this.summary.totalIncome;
 
   }
 
 
   get currentTotalExpenses(): number {
 
-    return this.transactions()
-      .filter(transaction => transaction.type === 'expense')
-      .reduce((total, transaction) => total + transaction.amount, 0);
+    return this.summary.totalExpense;
 
   }
 
 
   get currentNetSavings(): number {
 
-    return (
-      this.currentTotalIncome -
-      this.currentTotalExpenses
-    );
+    return this.summary.balance;
 
   }
 
@@ -629,16 +665,10 @@ export class DashboardComponent implements OnInit {
     const income = new Array(12).fill(0);
     const expenses = new Array(12).fill(0);
 
-    for (const transaction of this.transactions()) {
+    for (const entry of this.summary.monthlySummary) {
 
-      const monthIndex =
-        new Date(`${transaction.date}T00:00:00`).getMonth();
-
-      if (transaction.type === 'income') {
-        income[monthIndex] += transaction.amount;
-      } else {
-        expenses[monthIndex] += transaction.amount;
-      }
+      income[entry.month - 1] = entry.income;
+      expenses[entry.month - 1] = entry.expense;
     }
 
     return { income, expenses };
@@ -1499,13 +1529,10 @@ export class DashboardComponent implements OnInit {
     this.mobileSidebarOpen = false;
     this.activeSection = 'home';
 
-    localStorage.removeItem('loggedIn');
-    localStorage.removeItem('username');
-    localStorage.removeItem('email');
-    localStorage.removeItem('gmail');
-    localStorage.removeItem('token');
-
-    this.router.navigate(['/login']);
+    // .NET expires the session cookie; then leave the dashboard.
+    this.auth.logout().subscribe(() => {
+      this.router.navigate(['/login']);
+    });
 
   }
 

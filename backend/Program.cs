@@ -63,6 +63,7 @@ builder.Services.AddScoped<IFileRepository, FileRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 builder.Services
     .AddAuthentication(TokenAuthenticationHandler.SchemeName)
@@ -114,6 +115,8 @@ builder.Services.AddSwaggerGen(options =>
 
 var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
                   ?? ["http://localhost:4200", "http://127.0.0.1:4200"];
+
+builder.Services.AddSingleton(new TrustedOrigins(corsOrigins));
 
 builder.Services.AddCors(options =>
 {

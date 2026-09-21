@@ -80,11 +80,13 @@
 
   <main
     class="dashboard min-h-screen overflow-x-hidden"
-    style="padding: 28px 30px 35px; transition: width 0.28s ease, margin-left 0.28s ease;"
+    style="padding: 28px 30px 35px;"
+    [style.transition]="sidebarResizing ? 'none' : 'width 0.28s ease, margin-left 0.28s ease'"
+    [style.--sidebar-width]="sidebarWidth + 'px'"
     [class]="
       (sidebarCollapsed
         ? 'min-[901px]:[width:calc(100%-82px)] min-[901px]:ml-[82px]'
-        : 'min-[901px]:[width:calc(100%-245px)] min-[901px]:ml-[245px]') + ' ' +
+        : 'min-[901px]:[width:calc(100%-var(--sidebar-width))] min-[901px]:ml-[var(--sidebar-width)]') + ' ' +
       (mobileSidebarOpen
         ? 'max-[900px]:w-full max-[900px]:ml-0'
         : 'max-[900px]:[width:calc(100%-82px)] max-[900px]:ml-[82px]')

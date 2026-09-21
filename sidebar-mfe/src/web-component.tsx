@@ -71,11 +71,19 @@ class FinovaSidebarElement extends HTMLElement {
         }}
         onLayoutChange={(state) => {
           this.dispatchEvent(
-            new CustomEvent<{ collapsed: boolean; mobileOpen: boolean }>('layout-change', {
-              detail: state,
-              bubbles: true,
-              composed: true,
-            }),
+            new CustomEvent<{
+              collapsed: boolean;
+              mobileOpen: boolean;
+              width: number;
+              resizing: boolean;
+            }>(
+              'layout-change',
+              {
+                detail: state,
+                bubbles: true,
+                composed: true,
+              },
+            ),
           );
         }}
       />,

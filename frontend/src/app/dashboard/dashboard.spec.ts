@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DashboardComponent } from './dashboard';
-import { FinanceService, Transaction } from '../finance.service';
+import { FinanceService, Transaction, DashboardSummary } from '../finance.service';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
+import { AuthService } from '../auth.service';
 
 describe('DashboardComponent', () => {
 
@@ -15,21 +16,37 @@ describe('DashboardComponent', () => {
       type: 'income',
       category: 'Salary',
       amount: 50000,
-      date: '2026-01-10'
+      date: '2026-01-10',
+      files: []
     },
     {
       id: 2,
       type: 'expense',
       category: 'Food',
       amount: 5000,
-      date: '2026-01-15'
+      date: '2026-01-15',
+      files: []
     }
   ];
+
+  const dashboardSummary: DashboardSummary = {
+    totalIncome: 50000,
+    totalExpense: 5000,
+    balance: 45000,
+    monthlySummary: [
+      { month: 1, income: 50000, expense: 5000 }
+    ],
+    expensesByCategory: [
+      { category: 'Food', amount: 5000 }
+    ]
+  };
 
   beforeEach(async () => {
 
     const financeService = {
       getTransactionYears: () => of([2026]),
+
+      getDashboard: () => of(dashboardSummary),
 
       getTransactions: () => of(transactions)
     };
@@ -47,9 +64,13 @@ describe('DashboardComponent', () => {
       ]
     }).compileComponents();
 
-    localStorage.setItem('loggedIn', 'true');
-    localStorage.setItem('username', 'rishal');
-    localStorage.setItem('email', 'test@gmail.com');
+    // The session is a cookie validated by authGuard; the component just
+    // reads the user the guard put on AuthService.
+    TestBed.inject(AuthService).signedIn({
+      id: 1,
+      username: 'rishal',
+      email: 'test@gmail.com'
+    });
 
     fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.componentInstance;

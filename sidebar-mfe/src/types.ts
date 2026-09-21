@@ -34,8 +34,13 @@ export interface SidebarProps {
   onNavigate: (section: DashboardSection) => void;
   onChartSelect: (chart: DashboardChartType) => void;
   // The host's main content area shifts its margin based on whether the
-  // sidebar is collapsed/the mobile drawer is open — that's the one other
-  // piece of sidebar-internal state the host actually needs to mirror,
-  // purely for layout math, not for anything it decides.
-  onLayoutChange?: (state: { collapsed: boolean; mobileOpen: boolean }) => void;
+  // sidebar is collapsed/the mobile drawer is open, and now also its exact
+  // width once the user drags the resize handle — purely layout math, not
+  // anything the host decides.
+  onLayoutChange?: (state: {
+    collapsed: boolean;
+    mobileOpen: boolean;
+    width: number;
+    resizing: boolean;
+  }) => void;
 }

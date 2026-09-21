@@ -24,12 +24,64 @@ public class TransactionService(ITransactionRepository repository) : ITransactio
         }
     }
 
-    public async Task<ServiceResult<List<TransactionResponseDto>>> GetForYearAsync(long userId, int year)
+    public async Task<ServiceResult<List<TransactionResponseDto>>> GetForYearAsync(
+        long userId,
+        int year,
+        string? type = null,
+        string? category = null,
+        decimal? minAmount = null,
+        decimal? maxAmount = null,
+        DateOnly? dateFrom = null,
+        DateOnly? dateTo = null,
+        string? sortBy = null,
+        string? sortOrder = null)
     {
         try
         {
             var transactions = await repository.GetForYearAsync(userId, year);
-            return ServiceResult<List<TransactionResponseDto>>.Ok(transactions.Select(ToDto).ToList());
+            IEnumerable<TransactionResponseDto> dtos = transactions.Select(ToDto);
+
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                dtos = dtos.Where(t => string.Equals(t.Type, type, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrWhiteSpace(category))
+            {
+                dtos = dtos.Where(t => string.Equals(t.Category, category, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (minAmount.HasValue)
+            {
+                dtos = dtos.Where(t => t.Amount >= minAmount.Value);
+            }
+
+            if (maxAmount.HasValue)
+            {
+                dtos = dtos.Where(t => t.Amount <= maxAmount.Value);
+            }
+
+            if (dateFrom.HasValue)
+            {
+                dtos = dtos.Where(t => DateOnly.Parse(t.Date) >= dateFrom.Value);
+            }
+
+            if (dateTo.HasValue)
+            {
+                dtos = dtos.Where(t => DateOnly.Parse(t.Date) <= dateTo.Value);
+            }
+
+            var descending = string.Equals(sortOrder, "desc", StringComparison.OrdinalIgnoreCase);
+            dtos = sortBy?.ToLowerInvariant() switch
+            {
+                "amount" => descending ? dtos.OrderByDescending(t => t.Amount) : dtos.OrderBy(t => t.Amount),
+                "category" => descending ? dtos.OrderByDescending(t => t.Category) : dtos.OrderBy(t => t.Category),
+                "type" => descending ? dtos.OrderByDescending(t => t.Type) : dtos.OrderBy(t => t.Type),
+                "date" => descending ? dtos.OrderByDescending(t => t.Date) : dtos.OrderBy(t => t.Date),
+                _ => dtos
+            };
+
+            return ServiceResult<List<TransactionResponseDto>>.Ok(dtos.ToList());
         }
         catch (NpgsqlException)
         {

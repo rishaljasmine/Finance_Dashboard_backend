@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, signal, afterNextRender } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { FinanceService, AuthUser } from '../finance.service';
+import { AuthService } from '../auth.service';
 import { GOOGLE_CLIENT_ID } from '../google-config';
 
 declare const google: any;
@@ -36,13 +37,14 @@ export class LoginComponent {
   registeredMessage = signal('');
   submitting = signal(false);
 
-  // Shows a skeleton in place of the form briefly on first load,
-  // Instagram-style, instead of an instant flash of content.
-  pageReady = signal(false);
+  // The form is part of the server-rendered HTML, so it is shown right away
+  // (the old artificial skeleton delay would have SSR'd a placeholder).
+  pageReady = signal(true);
 
   constructor(
     private router: Router,
-    private financeService: FinanceService
+    private financeService: FinanceService,
+    private auth: AuthService
   ) {
 
     const navigation = this.router.getCurrentNavigation();
@@ -53,17 +55,9 @@ export class LoginComponent {
       );
     }
 
-    setTimeout(() => {
-
-      this.pageReady.set(true);
-
-      // The #google-signin-button container only exists once the
-      // skeleton above is swapped out for the real form, so this has
-      // to wait for that DOM update rather than running from
-      // ngAfterViewInit (which fires while the skeleton is still up).
-      setTimeout(() => this.initializeGoogleSignIn(), 0);
-
-    }, 700);
+    // Google Sign-In is a browser-only script. afterNextRender never runs
+    // during SSR, and by then the #google-signin-button container exists.
+    afterNextRender(() => this.initializeGoogleSignIn());
   }
 
   // =====================================================
@@ -142,12 +136,11 @@ export class LoginComponent {
   }
 
 
+  // .NET has already set the HttpOnly session cookie on the login response;
+  // there is nothing to store here.
   private applySession(user: AuthUser): void {
 
-    localStorage.setItem('loggedIn', 'true');
-    localStorage.setItem('username', user.username);
-    localStorage.setItem('email', user.email);
-    localStorage.setItem('token', user.token);
+    this.auth.signedIn(user);
 
     this.router.navigate(['/dashboard']);
   }

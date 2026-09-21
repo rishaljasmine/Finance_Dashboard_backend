@@ -23,14 +23,24 @@ public class TransactionsController(ITransactionService transactionService, IFil
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetForYear([FromQuery] int year)
+    public async Task<IActionResult> GetForYear(
+        [FromQuery] int year,
+        [FromQuery] string? type = null,
+        [FromQuery] string? category = null,
+        [FromQuery] decimal? minAmount = null,
+        [FromQuery] decimal? maxAmount = null,
+        [FromQuery] DateOnly? dateFrom = null,
+        [FromQuery] DateOnly? dateTo = null,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] string? sortOrder = null)
     {
         if (year is < 2000 or > 2100)
         {
             return Problem(statusCode: 422, detail: "year must be between 2000 and 2100.");
         }
 
-        var result = await transactionService.GetForYearAsync(UserId, year);
+        var result = await transactionService.GetForYearAsync(
+            UserId, year, type, category, minAmount, maxAmount, dateFrom, dateTo, sortBy, sortOrder);
         return result.Success
             ? Ok(result.Data)
             : Problem(statusCode: result.ErrorStatusCode, detail: result.ErrorMessage);

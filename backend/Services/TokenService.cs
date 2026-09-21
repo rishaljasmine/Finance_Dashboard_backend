@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using FinanceDashboardApi.Common;
 using FinanceDashboardApi.Services.Interfaces;
 
 namespace FinanceDashboardApi.Services;
@@ -54,6 +55,15 @@ public class TokenService(string authSecret) : ITokenService
         {
             var payloadJson = Encoding.UTF8.GetString(Base64Url.Decode(payloadEncoded));
             using var doc = JsonDocument.Parse(payloadJson);
+
+            // Tokens used to be valid forever. The cookie's Max-Age is only a
+            // hint to the browser, so the server enforces the lifetime itself.
+            var createdAt = DateTimeOffset.Parse(doc.RootElement.GetProperty("created_at").GetString()!);
+            if (DateTimeOffset.UtcNow - createdAt > SessionCookie.Lifetime)
+            {
+                return null;
+            }
+
             return doc.RootElement.GetProperty("user_id").GetInt64();
         }
         catch

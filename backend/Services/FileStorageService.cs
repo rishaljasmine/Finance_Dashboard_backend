@@ -6,6 +6,7 @@ using FinanceDashboardApi.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using Path = System.IO.Path; // HotChocolate also exposes a `Path` type via its global usings
 
 namespace FinanceDashboardApi.Services;
 

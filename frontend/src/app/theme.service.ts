@@ -1,15 +1,22 @@
-import { Injectable, effect, signal } from '@angular/core';
+import { Injectable, effect, signal, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
 
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+
   isLight = signal(this.readStoredTheme());
 
   constructor() {
 
     effect(() => {
+
+      if (!this.isBrowser) {
+        return;
+      }
 
       document.documentElement.classList.toggle(
         'light',
@@ -30,7 +37,7 @@ export class ThemeService {
 
 
   private readStoredTheme(): boolean {
-    return localStorage.getItem('theme') === 'light';
+    return this.isBrowser && localStorage.getItem('theme') === 'light';
   }
 
 }

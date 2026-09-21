@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent, HttpHeaders, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpParams, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 
@@ -68,11 +68,52 @@ export interface RegisterRequest {
 // AUTH USER
 // =====================================================
 
+// The session token is deliberately absent: it lives only in an HttpOnly
+// cookie set by .NET, so JavaScript never receives it.
 export interface AuthUser {
   id: number;
   username: string;
   email: string;
-  token: string;
+}
+
+
+// =====================================================
+// DASHBOARD SUMMARY (from GET /api/dashboard)
+// =====================================================
+
+export interface MonthlySummary {
+  month: number;
+  income: number;
+  expense: number;
+}
+
+export interface CategoryExpense {
+  category: string;
+  amount: number;
+}
+
+export interface DashboardSummary {
+  totalIncome: number;
+  totalExpense: number;
+  balance: number;
+  monthlySummary: MonthlySummary[];
+  expensesByCategory: CategoryExpense[];
+}
+
+
+// =====================================================
+// TRANSACTION QUERY FILTERS (for GET /api/transactions)
+// =====================================================
+
+export interface TransactionQuery {
+  type?: 'income' | 'expense';
+  category?: string;
+  minAmount?: number;
+  maxAmount?: number;
+  dateFrom?: string;
+  dateTo?: string;
+  sortBy?: 'date' | 'amount' | 'category' | 'type';
+  sortOrder?: 'asc' | 'desc';
 }
 
 
@@ -88,9 +129,12 @@ export class FinanceService {
   // ===================================================
   // BACKEND URL
   // ===================================================
+  //
+  // Relative on purpose. api-backend.ts resolves '/api/...' to the .NET
+  // origin and attaches the session cookie, in the browser and during SSR.
 
   private readonly baseUrl =
-    'http://127.0.0.1:8002/api';
+    '/api';
 
 
   private readonly transactionsUrl =
@@ -99,6 +143,10 @@ export class FinanceService {
 
   private readonly transactionYearsUrl =
     `${this.baseUrl}/transactions/years`;
+
+
+  private readonly dashboardUrl =
+    `${this.baseUrl}/dashboard`;
 
 
   private readonly loginUrl =
@@ -113,6 +161,14 @@ export class FinanceService {
     `${this.baseUrl}/auth/google`;
 
 
+  private readonly logoutUrl =
+    `${this.baseUrl}/auth/logout`;
+
+
+  private readonly meUrl =
+    `${this.baseUrl}/me`;
+
+
   private readonly filesUrl =
     `${this.baseUrl}/files`;
 
@@ -123,34 +179,8 @@ export class FinanceService {
 
 
   // ===================================================
-  // AUTH HEADERS
-  // ===================================================
-
-  private authHeaders(): HttpHeaders {
-
-    const token = localStorage.getItem('token');
-
-    return token
-      ? new HttpHeaders({ Authorization: `Bearer ${token}` })
-      : new HttpHeaders();
-  }
-
-
-  // ===================================================
-  // GET TRANSACTIONS
-  // ===================================================
-
-  getTransactions(
-    year: number
-  ): Observable<Transaction[]> {
-
-    return this.http.get<Transaction[]>(
-      `${this.transactionsUrl}?year=${year}`,
-      { headers: this.authHeaders() }
-    );
-  }
-
-
+  // Authentication is the HttpOnly session cookie, attached by
+  // api-backend.ts, so no per-call header handling is needed here.
   // ===================================================
   // GET TRANSACTION YEARS
   // ===================================================
@@ -158,8 +188,44 @@ export class FinanceService {
   getTransactionYears(): Observable<number[]> {
 
     return this.http.get<number[]>(
-      this.transactionYearsUrl,
-      { headers: this.authHeaders() }
+      this.transactionYearsUrl
+    );
+  }
+
+
+  // ===================================================
+  // GET TRANSACTIONS FOR A YEAR (with optional filter/sort)
+  // ===================================================
+
+  getTransactions(
+    year: number,
+    query: TransactionQuery = {}
+  ): Observable<Transaction[]> {
+
+    let params = new HttpParams().set('year', year);
+
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== null && value !== '') {
+        params = params.set(key, value);
+      }
+    }
+
+    return this.http.get<Transaction[]>(
+      this.transactionsUrl,
+      { params }
+    );
+  }
+
+
+  // ===================================================
+  // GET DASHBOARD SUMMARY FOR A YEAR
+  // ===================================================
+
+  getDashboard(year: number): Observable<DashboardSummary> {
+
+    return this.http.get<DashboardSummary>(
+      this.dashboardUrl,
+      { params: new HttpParams().set('year', year) }
     );
   }
 
@@ -174,8 +240,7 @@ export class FinanceService {
 
     return this.http.post<Transaction>(
       this.transactionsUrl,
-      transaction,
-      { headers: this.authHeaders() }
+      transaction
     );
   }
 
@@ -191,6 +256,31 @@ export class FinanceService {
     return this.http.post<AuthUser>(
       this.loginUrl,
       request
+    );
+  }
+
+
+  // ===================================================
+  // CURRENT USER (validates the session cookie)
+  // ===================================================
+
+  getCurrentUser(): Observable<AuthUser> {
+
+    return this.http.get<AuthUser>(
+      this.meUrl
+    );
+  }
+
+
+  // ===================================================
+  // LOGOUT (.NET expires the session cookie)
+  // ===================================================
+
+  logout(): Observable<void> {
+
+    return this.http.post<void>(
+      this.logoutUrl,
+      null
     );
   }
 
@@ -243,7 +333,6 @@ export class FinanceService {
       `${this.transactionsUrl}/${transactionId}/files`,
       formData,
       {
-        headers: this.authHeaders(),
         reportProgress: true
       }
     );
@@ -263,7 +352,6 @@ export class FinanceService {
     return this.http.get(
       `${this.filesUrl}/${id}/download`,
       {
-        headers: this.authHeaders(),
         responseType: 'blob'
       }
     );

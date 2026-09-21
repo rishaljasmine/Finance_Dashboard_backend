@@ -163,7 +163,7 @@ describe('LoginComponent', () => {
 
 
     const request = httpTesting.expectOne(
-      'http://127.0.0.1:8000/api/auth/login'
+      '/api/auth/login'
     );
 
 
@@ -187,8 +187,7 @@ describe('LoginComponent', () => {
       message: 'Login successful.',
       id: 1,
       username: 'rishal',
-      email: 'test@gmail.com',
-      token: 'test-token'
+      email: 'test@gmail.com'
 
     });
 
@@ -212,7 +211,7 @@ describe('LoginComponent', () => {
 
 
     const request = httpTesting.expectOne(
-      'http://127.0.0.1:8000/api/auth/login'
+      '/api/auth/login'
     );
 
 

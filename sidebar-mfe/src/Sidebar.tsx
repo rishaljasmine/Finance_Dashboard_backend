@@ -2,6 +2,11 @@ import { useEffect, useState } from 'react';
 import { CHART_TYPES, type SidebarProps } from './types';
 
 const MOBILE_BREAKPOINT = '(max-width: 900px)';
+const DESKTOP_BREAKPOINT = '(min-width: 901px)';
+
+const DEFAULT_WIDTH = 245;
+const MIN_WIDTH = 200;
+const MAX_WIDTH = 420;
 
 function isMobileViewport(): boolean {
   return window.matchMedia(MOBILE_BREAKPOINT).matches;
@@ -25,12 +30,83 @@ export function Sidebar({
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [overviewMenuOpen, setOverviewMenuOpen] = useState(false);
 
+  // Only meaningful in the expanded desktop state — the collapsed rail and
+  // the mobile drawer keep their existing fixed widths untouched.
+  const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_WIDTH);
+  const [isDesktop, setIsDesktop] = useState(() => !isMobileViewport());
+  // While actively dragging, the width/margin transition (meant for the
+  // collapse/expand click) has to be switched off — otherwise every
+  // mousemove fights a 280ms animation instead of tracking the cursor,
+  // which is what made the drag feel laggy.
+  const [isResizing, setIsResizing] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia(DESKTOP_BREAKPOINT);
+    const handler = () => setIsDesktop(mql.matches);
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
+  }, []);
+
   // Report outward whenever the sidebar's own width would change, so the
   // host can keep its main-content margin in sync without needing to know
   // *why* the width changed — just that it did.
   useEffect(() => {
-    onLayoutChange?.({ collapsed: sidebarCollapsed, mobileOpen: mobileSidebarOpen });
-  }, [sidebarCollapsed, mobileSidebarOpen, onLayoutChange]);
+    onLayoutChange?.({
+      collapsed: sidebarCollapsed,
+      mobileOpen: mobileSidebarOpen,
+      width: sidebarCollapsed ? 82 : sidebarWidth,
+      resizing: isResizing,
+    });
+  }, [sidebarCollapsed, mobileSidebarOpen, sidebarWidth, isResizing, onLayoutChange]);
+
+  // Drag-to-resize handle on the sidebar's right edge. Deliberately separate
+  // from the collapse/expand toggle above — dragging only changes the width
+  // within the expanded desktop state, it never collapses or expands it.
+  function handleResizeMouseDown(event: React.MouseEvent): void {
+    if (sidebarCollapsed || !isDesktop) return;
+    event.preventDefault();
+
+    const startX = event.clientX;
+    const startWidth = sidebarWidth;
+
+    setIsResizing(true);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+
+    // rAF-throttled so a fast mouse doesn't queue more state updates than
+    // the browser can paint — the state always reflects the latest pointer
+    // position, just applied at most once per frame.
+    let rafId = 0;
+    let pendingWidth = startWidth;
+
+    function applyPendingWidth(): void {
+      rafId = 0;
+      setSidebarWidth(pendingWidth);
+    }
+
+    function onMouseMove(moveEvent: MouseEvent): void {
+      const nextWidth = startWidth + (moveEvent.clientX - startX);
+      pendingWidth = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, nextWidth));
+      if (!rafId) {
+        rafId = requestAnimationFrame(applyPendingWidth);
+      }
+    }
+
+    function onMouseUp(): void {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        setSidebarWidth(pendingWidth);
+      }
+      setIsResizing(false);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    }
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  }
 
   function toggleSidebar(): void {
     if (isMobileViewport()) {
@@ -105,7 +181,7 @@ export function Sidebar({
         className={[
           'fixed left-0 top-0 bottom-0 flex flex-col border-r border-[#1b2635] light:border-[#e5e7eb] z-[1000]',
           '[background:linear-gradient(180deg,#090f19,#080d15)] light:[background:#fafbfe]',
-          'transition-[width,transform] duration-[280ms] ease-in-out',
+          isResizing ? '' : 'transition-[width,transform] duration-[280ms] ease-in-out',
           sidebarCollapsed
             ? 'min-[901px]:w-[82px] min-[901px]:pl-[10px] min-[901px]:pr-[10px] min-[901px]:py-[28px]'
             : 'min-[901px]:w-[245px] min-[901px]:px-[20px] min-[901px]:py-[28px]',
@@ -114,6 +190,9 @@ export function Sidebar({
             : 'max-[900px]:w-[82px] max-[900px]:px-[10px] max-[900px]:py-[22px]',
           'max-[900px]:translate-x-0',
         ].join(' ')}
+        style={
+          !sidebarCollapsed && isDesktop ? { width: sidebarWidth } : undefined
+        }
       >
         <div className="w-full h-full flex flex-col transition-all duration-[250ms]">
           {/* LOGO */}
@@ -350,6 +429,18 @@ export function Sidebar({
             </div>
           </nav>
         </div>
+
+        {/* RESIZE HANDLE — drags the sidebar wider/narrower in the expanded
+            desktop state only; the collapse/expand toggle above is untouched. */}
+        {!sidebarCollapsed && (
+          <div
+            className="hidden min-[901px]:block absolute top-0 right-0 h-full w-[6px] translate-x-1/2 cursor-col-resize z-[1001] hover:bg-[#8b5cf6]/40 active:bg-[#8b5cf6]/60"
+            onMouseDown={handleResizeMouseDown}
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Resize sidebar"
+          />
+        )}
       </aside>
 
       {/* MOBILE BACKDROP */}
